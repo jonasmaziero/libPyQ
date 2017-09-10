@@ -10,6 +10,9 @@
 #import plots
 #plots.plot2d()
 
-import rng
-rng.test_rng()
+#import rng
+#rng.test_rng()
+
+import rpvg
+rpvg.rpv_test()
 #-----------------------------------------------------------------------------------------------------------------------------------

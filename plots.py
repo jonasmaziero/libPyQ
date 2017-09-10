@@ -2,15 +2,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
 #-----------------------------------------------------------------------------------------------------------------------------------
-def plot2d():
-    x = [1,2,3]
-    y1 = [1,2,3]
-    y2 = [2,3,4]
-    plt.plot(x,y1,label='y1')
-    plt.plot(x,y2,label='y2')
+def plot2d(x,y):
+    #x = [1,2,3]
+    #y1 = [1,2,3]
+    #y2 = [2,3,4]
+    plt.plot(x,y,label='')
+    #plt.plot(x,y2,label='y2')
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title('title\nsubtitle')
+    #plt.title('title\nsubtitle')
     plt.legend()
     plt.show()
 #-----------------------------------------------------------------------------------------------------------------------------------
