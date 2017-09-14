@@ -5,13 +5,13 @@ random.seed()
   
 #------------------------------------------------------------------------------------------------------------------------------------
 def rpv_test():
-  d = 5
+  d = 3
   rpv = np.zeros(d)
   '''rpv = rpv_zhsl(d)
   for j in range(0,d):
     print('j=', j, 'rpv[j]', rpv[j])
   print('normalization',np.sum(rpv))'''
-  ns = 10**4
+  ns = 10**6
   ni = 40
   delta = 1.0/ni
   avg_rpv = np.zeros(d)
