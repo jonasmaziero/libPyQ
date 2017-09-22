@@ -28,10 +28,3 @@ def fidelity_pm(psi, rho):
   F = abs(np.inner(psiD, phi))
   return F
 #------------------------------------------------------------------------------------------------------------------------------------
-# Returns the FIDELITY between 2 MIXED states
-def fidelity_mm(psi, rho):
-  psiD = np.conjugate(psi)
-  phi = np.matmul(rho, psi)
-  F = abs(np.inner(psiD, phi))
-  return F
-#------------------------------------------------------------------------------------------------------------------------------------
