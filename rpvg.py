@@ -11,7 +11,7 @@ def rpv_test():
   for j in range(0,d):
     print('j=', j, 'rpv[j]', rpv[j])
   print('normalization',np.sum(rpv))'''
-  ns = 10**6
+  ns = 10**4
   ni = 40
   delta = 1.0/ni
   avg_rpv = np.zeros(d)
