@@ -13,7 +13,7 @@ def test_kp():
   for k in range(0,r):
     print(np.real(kp[k][0]), np.real(kp[k][1]), np.real(kp[k][2]), np.real(kp[k][3]))
 #------------------------------------------------------------------------------------------------------------------------------------
-# Returns the tensor product of two general complex matrices
+# Returns the tensor product of two general complex matrices (this function is already implemented in numpy)
 def kronecker_product(ra, ca, rb, cb, A, B):  
 # ra, ca, rb, cb  # Number of rows and columns of the two matrices
 # M1(ra,ca), M2(rb,cb)  ! Matrices to take the tensor product of
