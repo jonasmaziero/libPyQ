@@ -15,8 +15,11 @@ print(rho)'''
 #import distances
 #distances.test_distances()
 
-import tomography
-tomography.tomo_2qb()
-
-
+import tomography;  path = "/home/jonasmaziero/Dropbox/Research/IBM_QC/tomography/BDS/c1_06/"
+rhoE = tomography.tomo_2qb(path)
+CM = [[1.0, 0.0, 0.0, 0.0],[0.0, 0.6, 0.0, 0.0],[0.0, 0.0, -0.6, 0.0], [0.0, 0.0, 0.0, 0.25]]
+from states import rho_2qb;  rhoT = rho_2qb(CM)#;  print(rhoE-rhoT)
+import distances; print(distances.fidelity_mm(4, rhoT, rhoE))
+#print(rhoE.real)
+import plots;  plots.plot3dBar(rhoT.real)
 #-----------------------------------------------------------------------------------------------------------------------------------
