@@ -20,7 +20,7 @@ def shannon(d,pv):
     j = j + 1
     if pv[j] > 1.e-15 and pv[j] < (1.0-1.e-15):
       SE = SE - pv[j]*log(pv[j],2)
-  return S
+  return SE
 #------------------------------------------------------------------------------------------------------------------------------------
 # Returns the von Neumann entropy of a dxd density matrix rho
 def neumann(d,rho):

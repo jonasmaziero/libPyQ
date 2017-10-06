@@ -57,3 +57,11 @@ def fidelity_mm(d, rho, zeta):
     F = F + sqrt(eigA[n])
   return F
 #-----------------------------------------------------------------------------------------------------------------------------------
+# Returns the TRACE NORM (or 1-norm) of an HERMITIAN matrix A (||A||_1 = sum_j |a_j|, where a_j are the eigenvalues of A)
+def normTr(d, A):
+  from numpy import linalg as LA;  ev = LA.eigvalsh(A)   
+  Ntr = 0.0
+  for j in range(0,d):
+    Ntr = Ntr + abs(ev[j])
+  return Ntr
+#-----------------------------------------------------------------------------------------------------------------------------------

@@ -28,6 +28,7 @@ def tomo_2qb(path):
   pZZ = genfromtxt(fname, delimiter = ",", skip_header = 1);  CM[3][3] = ((pZZ[0][1] + pZZ[3][1]) - (pZZ[1][1] + pZZ[2][1]))/ns
   CM[3][0] = ((pZZ[0][1] + pZZ[2][1]) - (pZZ[1][1] + pZZ[3][1]))/ns
   CM[0][3] = ((pZZ[0][1] + pZZ[1][1]) - (pZZ[2][1] + pZZ[3][1]))/ns
+  print(CM.real)
   from states import rho_2qb;  rho = rho_2qb(CM)
   return rho
 #------------------------------------------------------------------------------------------------------------------------------------

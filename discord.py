@@ -1,4 +1,26 @@
 #------------------------------------------------------------------------------------------------------------------------------------
+# Returns the OLLIVIER-ZUREK discord for 2-qubit Bell-diagonal states
+def discord_oz_bds(rho):
+  D = mi_bds(rho) - ccorr_hv_bds(rho)
+  return D
+#---------------------------------
+# Returns the Henderson-Vedral classical correlation for 2-qubit Bell-diagonal states
+def ccorr_hv_bds(rho):
+  from math import log
+  c3 = 4.0*rho[0][0] - 1.0;  c1 = 2.0*(rho[0][3] + rho[1][2]);  c2 = 2.0*(rho[1][2] - rho[0][3])
+  c = max(abs(c1), abs(c2), abs(c3))
+  cc = 0.5*((1.0-c)*log(1.0-c,2) + (1.0+c)*log(1.0+c,2))
+  return cc
+#---------------------------------
+# Returns the mutual information for 2-qubit Bell-diagonal states
+def mi_bds(rho):
+  from math import log
+  c3 = 4.0*rho[0][0] - 1.0;  c1 = 2.0*(rho[0][3] + rho[1][2]);  c2 = 2.0*(rho[1][2] - rho[0][3])
+  l00 = (1.0 + c1 - c2 + c3)/4.0;  l01 = (1.0 + c1 + c2 - c3)/4.0
+  l10 = (1.0 - c1 + c2 + c3)/4.0;  l11 = (1.0 - c1 - c2 - c3)/4.0
+  mi = l00*log(4.0*l00,2) + l01*log(4.0*l01,2) + l10*log(4.0*l10,2) + l11*log(4.0*l11,2)
+  return mi
+#-----------------------------------------------------------------------------------------------------------------------------------
 def test_discord():
   from numpy import zeros
   '''
@@ -62,26 +84,4 @@ def test_discord():
   plt.xlabel('theta')
   plt.legend()
   plt.show()
-#------------------------------------------------------------------------------------------------------------------------------------
-# Returns the OLLIVIER-ZUREK discord for 2-qubit Bell-diagonal states
-def discord_oz_bds(rho):
-  D = mi_bds(rho) - ccorr_hv_bds(rho)
-  return D
-#---------------------------------
-# Returns the Henderson-Vedral classical correlation for 2-qubit Bell-diagonal states
-def ccorr_hv_bds(rho):
-  from math import log
-  c3 = 4.0*rho[0][0] - 1.0;  c1 = 2.0*(rho[0][3] + rho[1][2]);  c2 = 2.0*(rho[1][2] - rho[0][3])
-  c = max(abs(c1), abs(c2), abs(c3))
-  cc = 0.5*((1.0-c)*log(1.0-c,2) + (1.0+c)*log(1.0+c,2))
-  return cc
-#---------------------------------
-# Returns the mutual information for 2-qubit Bell-diagonal states
-def mi_bds(rho):
-  from math import log
-  c3 = 4.0*rho[0][0] - 1.0;  c1 = 2.0*(rho[0][3] + rho[1][2]);  c2 = 2.0*(rho[1][2] - rho[0][3])
-  l00 = (1.0 + c1 - c2 + c3)/4.0;  l01 = (1.0 + c1 + c2 - c3)/4.0
-  l10 = (1.0 - c1 + c2 + c3)/4.0;  l11 = (1.0 - c1 - c2 - c3)/4.0
-  mi = l00*log(4.0*l00,2) + l01*log(4.0*l01,2) + l10*log(4.0*l10,2) + l11*log(4.0*l11,2)
-  return mi
 #------------------------------------------------------------------------------------------------------------------------------------
