@@ -36,5 +36,5 @@ rho = [[0.5,0,0,0.5],[0,0,0,0],[0,0,0,0],[0.5,0,0,0.5]]; rhoTp = Tb(2, 2, rho)#;
 from entanglement import negativity;  print(negativity(4, rhoTp))
 from states import werner;  rho = werner(1.0);  print(rho.real)
 '''
-import entanglement;  entanglement.test_entanglement()
+#import entanglement;  entanglement.test_entanglement()
 #-----------------------------------------------------------------------------------------------------------------------------------
