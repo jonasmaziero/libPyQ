@@ -37,4 +37,6 @@ from entanglement import negativity;  print(negativity(4, rhoTp))
 from states import werner;  rho = werner(1.0);  print(rho.real)
 '''
 #import entanglement;  entanglement.test_entanglement()
+
+import rsvg;  rsvg.test_rsvg()
 #-----------------------------------------------------------------------------------------------------------------------------------

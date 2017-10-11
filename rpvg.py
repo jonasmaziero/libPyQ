@@ -36,7 +36,6 @@ def rpv_test():
   import plots
   plots.plot2d(x,y)
 #------------------------------------------------------------------------------------------------------------------------------------
-# Ref: Zyczkowski et al. (1998). Volume of the set of separable states, Phys. Rev. A 58, 883
 def rpv_zhsl(d):
   rn = np.zeros(d-1)
   for j in range(0,d-1):

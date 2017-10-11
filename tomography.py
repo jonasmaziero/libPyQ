@@ -33,15 +33,12 @@ def tomo_2qb(path):
   return rho
 #------------------------------------------------------------------------------------------------------------------------------------
 def tomo_1qb(path):
-  from numpy import genfromtxt, zeros
+  from numpy import genfromtxt
   ns = 8192.0
-  fname = path + "X.csv"
-  pX = genfromtxt(fname, delimiter = ",", skip_header = 1);  r1 = (pX[0][1] - pX[1][1])/ns
-  fname = path + "Y.csv"
-  pY = genfromtxt(fname, delimiter = ",", skip_header = 1);  r2 = (pY[0][1] - pY[1][1])/ns
-  fname = path + "Z.csv"
-  pZ = genfromtxt(fname, delimiter = ",", skip_header = 1);  r3 = (pZ[0][1] - pZ[1][1])/ns
+  fname = path + "X.csv";  pX = genfromtxt(fname, delimiter = ",", skip_header = 1);  r1 = (pX[0][1] - pX[1][1])/ns
+  fname = path + "Y.csv";  pY = genfromtxt(fname, delimiter = ",", skip_header = 1);  r2 = (pY[0][1] - pY[1][1])/ns
+  fname = path + "Z.csv";  pZ = genfromtxt(fname, delimiter = ",", skip_header = 1);  r3 = (pZ[0][1] - pZ[1][1])/ns
   #print(r1, r2, r3)
-  from states import rho_1qb;  rho = rho_2qb(r1, r2, r3)
+  from states import rho_1qb;  rho = rho_1qb(r1, r2, r3)
   return rho
 #------------------------------------------------------------------------------------------------------------------------------------

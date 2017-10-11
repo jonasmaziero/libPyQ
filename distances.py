@@ -21,6 +21,8 @@ def test_distances():
   y = [[1.0/2.0,1.0/2.0],[1.0/2.0,1.0/2.0]]
   print(fidelity_mm(2, x, y))
   
+#-----------------------------------------------------------------------------------------------------------------------------------
+#                                                            CLOSENESS
 #------------------------------------------------------------------------------------------------------------------------------------
 # Returns the FIDELITY between 2 PURE states
 def fidelity_pp(psi, phi):
@@ -57,6 +59,16 @@ def fidelity_mm(d, rho, zeta):
     F = F + sqrt(eigA[n])
   return F
 #-----------------------------------------------------------------------------------------------------------------------------------
+#                                                              NORMS
+#-----------------------------------------------------------------------------------------------------------------------------------
+# Returns the norm of a complex vector
+def norm(d, psi):
+  N = 0.0
+  for j in range(0,d):
+    N = N + (psi[j].real)**2.0 + (psi[j].imag)**2.0
+  from math import sqrt;  N = sqrt(N)
+  return N
+#-----------------------------------------------------------------------------------------------------------------------------------
 # Returns the TRACE NORM (or 1-norm) of an HERMITIAN matrix A (||A||_1 = sum_j |a_j|, where a_j are the eigenvalues of A)
 def normTr(d, A):
   from numpy import linalg as LA;  ev = LA.eigvalsh(A)   
@@ -64,4 +76,13 @@ def normTr(d, A):
   for j in range(0,d):
     Ntr = Ntr + abs(ev[j])
   return Ntr
+#-----------------------------------------------------------------------------------------------------------------------------------
+# Returns the HILBERT-SCHMIDT (or 2-norm) of an HERMITIAN matrix A (||A||_2 = sqrt(sum_jk |A_jk|**2)
+def normHS(d, A):
+  N = 0.0
+  for j in range(0,d):
+    for k in range(0,d):
+      N = N + (A[j][k].real)**2.0 + (A[j][k].imag)**2.0
+  from math import sqrt;  N = sqrt(N)
+  return N
 #-----------------------------------------------------------------------------------------------------------------------------------
