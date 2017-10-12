@@ -3,7 +3,7 @@ from numpy import random;  random.seed()
 import numpy as np
 import plots
 #------------------------------------------------------------------------------------------------------------------------------------
-def test_rng():
+def test():
   # test for 2d distribution
   ns = 10**4
   '''x = np.zeros(ns)

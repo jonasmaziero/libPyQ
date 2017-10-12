@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------------------------------------------------------------
-def test_rsvg():
+def test():
   from distances import fidelity_pp;  from numpy import zeros;  from math import sqrt
   ns = 10**3 # number of samples for the average
   nqb = 5 # maximum number of qubits regarded
