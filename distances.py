@@ -28,7 +28,7 @@ def test_distances():
 def fidelity_pp(psi, phi):
   from numpy import conjugate, inner
   psiD = conjugate(psi)
-  F = abs(inner(psiD, phi))
+  F = (abs(inner(psiD, phi)))**2.0
   return F
 #------------------------------------------------------------------------------------------------------------------------------------
 # Returns the FIDELITY between a PURE and a MIXED state
@@ -68,6 +68,19 @@ def norm(d, psi):
     N = N + (psi[j].real)**2.0 + (psi[j].imag)**2.0
   from math import sqrt;  N = sqrt(N)
   return N
+#------------------------------------------------------------------------------------------------------------------------------------
+# returns ||psi||=sqrt(<psi|psi>)
+'''def norm(d, psi):
+  N = inner(d, psi, psi);  from math import sqrt
+  return sqrt(N.real)'''
+#------------------------------------------------------------------------------------------------------------------------------------
+# returns <psi|psi> = psi^{dagger}*phi
+def inner(d, psi, phi):
+  from numpy import zeros, conj;  csi = zeros(d, dtype = complex);  csi = conj(psi)
+  ip = 0.0
+  for j in range(0,d):
+    ip = ip + csi[j]*phi[j]
+  return ip
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Returns the TRACE NORM (or 1-norm) of an HERMITIAN matrix A (||A||_1 = sum_j |a_j|, where a_j are the eigenvalues of A)
 def normTr(d, A):

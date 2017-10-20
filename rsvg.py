@@ -6,7 +6,8 @@ def test():
   Favg = zeros(nqb);  Fexa = zeros(nqb);  d = zeros(nqb, dtype = int)
   for j in range(0,nqb):
     d[j] = 2**(j+1);  psi = zeros(d[j], dtype = complex);  phi = zeros(d[j], dtype = complex)
-    Fexa[j] = sqrt(1.0/d[j]);  Favg[j] = 0.0
+    Fexa[j] = 1.0/d[j]
+    Favg[j] = 0.0
     for k in range(0,ns):
       psi = rsvg(d[j]);  phi = rsvg(d[j]);  Favg[j] = Favg[j] + fidelity_pp(psi, phi)
     Favg[j] = Favg[j]/ns

@@ -21,7 +21,7 @@ def rdm_ginibre(d):
   from distances import normHS;  N2 = (normHS(d, G))**2.0
   for j in range(0,d):
     for k in range(0,d):
-      rdm[j][k] = 0.0
+      rdm[j][k] = 0.0 
       for l in range(0,d):
         rdm[j][k] = rdm[j][k] + (G[j][l].real)*(G[k][l].real) + (G[j][l].imag)*(G[k][l].imag) \
                               - (1j)*((G[j][l].real)*(G[k][l].imag) - (G[j][l].imag)*(G[k][l].real))
