@@ -1,9 +1,10 @@
-import urllib2
-#from urllib.request import urlopen
+from urllib.request import urlopen
+#import json
+import pickle
 
-def getRandomBin():
-    url = 'http://150.203.48.55/RawBin.php'
+def anu():
+    url = 'https://qrng.anu.edu.au/API/jsonI.php?length=10&type=uint16'
     page = urlopen(url, timeout=5)
-    data = page.read()
-    num = data.split('"rng"')[1].split('<td>\n')[1].split('</td>')[0]
-    return num
+    #data = page.read()
+    ty, le, da, st = pickle.load(page, encoding = 'latin1')
+    print(da)
