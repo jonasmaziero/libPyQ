@@ -16,15 +16,15 @@ def bdsCorr():
     eig = lapak.zheevd(rho)
     print('eigens:', eig[0][0], eig[0][1], eig[0][2], eig[0][3])
     import discord
-    dp = 0.025
-    d = 40*(1-0)
+    dp = 0.05
+    d = 20*(1-0)
     di = zeros(d)
     cc = zeros(d)
     mi = zeros(d)
-    '''diE = zeros(d)
+    diE = zeros(d)
     ccE = zeros(d)
     miE = zeros(d)
-    rhopE = zeros((4, 4), dtype=complex)'''
+    rhopE = zeros((4, 4), dtype=complex)
     pv = zeros(d)
     rhop = zeros((4, 4), dtype=complex)
     import kraus
@@ -51,17 +51,17 @@ def bdsCorr():
         di[j] = discord.discord_oz_bds(rhop)
         cc[j] = discord.ccorr_hv_bds(rhop)
         mi[j] = discord.mi_bds(rhop)
-        sj = str(j)
-        path = '/home/jonasmaziero/Dropbox/Advising/PhD_Mauro/bell_diagonal/'
-        path += sj
-        path += '/'
+        '''sj = str(j)
+        path1 = '/home/jonasmaziero/Dropbox/Research/IBM_QC/'
+        path2 = 'tomography/BDS/bell_diagonal/'
+        path = path1 + path2 + sj + '/'
         rhopE = tomo.tomo_2qb(path)
         diE[j] = discord.discord_oz_bds(rhopE)
         ccE[j] = discord.ccorr_hv_bds(rhopE)
         miE[j] = discord.mi_bds(rhopE)
         eigE = lapak.zheevd(rhopE)
         print('eigensE:', eigE[0][0], eigE[0][1], eigE[0][2], eigE[0][3])
-        print('di =', di[j], '  diE = ', diE[j])
+        print('di =', di[j], '  diE = ', diE[j])'''
 
     plt.plot(pv, di, label='di')
     plt.plot(pv, cc, label='cc')
