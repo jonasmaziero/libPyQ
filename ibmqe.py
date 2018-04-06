@@ -69,3 +69,30 @@ def bdsCorr():
     plt.xlabel('p')
     plt.legend()
     plt.show()
+
+
+def Werner():
+    from numpy import zeros
+    import tomography as tomo
+    import pTranspose as Tp
+    rhoE = zeros((4, 4), dtype=complex)
+    import entanglement as ent
+    N = 14
+    wv = np.array([0, 0.1, 0.2, 0.3, 0.32,
+                   0.34, 0.36, 0.38, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+    Ev = zeros(N)
+    for j in range(0, N):
+        sj = str(j)
+        path1 = '/home/jonasmaziero/Dropbox/Research/IBM_QC/'
+        path2 = 'tomography/Werner/'
+        path = path1 + path2 + sj + '/'
+        rhoE = tomo.tomo_2qb(path)
+        #Ev[j] = ent.concurrence(rhoE)
+        Ev[j] = 2.*ent.negativity(4, Tp.pTransposeL(2, 2, rhoE))
+        '''if j == 13:
+            print(wv[j], Ev[j])
+            tomo.plot_rho2qb(rhoE)'''
+    plt.plot(wv, Ev, label='E')
+    plt.xlabel('w')
+    plt.legend()
+    plt.show()
