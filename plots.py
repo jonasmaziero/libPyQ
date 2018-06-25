@@ -5,9 +5,9 @@ import numpy as np
 
 
 def plot2d(x, y):
-    #x = [1,2,3]
-    #y1 = [1,2,3]
-    #y2 = [2,3,4]
+    # x = [1,2,3]
+    # y1 = [1,2,3]
+    # y2 = [2,3,4]
     plt.plot(x, y, label='')
     # plt.plot(x,y2,label='y2')
     plt.xlabel('x')
@@ -45,7 +45,7 @@ def plotBar():
 def plotHistogram():
     populationAges = [22, 55, 62, 45, 21, 22, 34, 42, 42, 4, 99, 102, 55,
                       44, 66, 77, 33, 22, 99, 88, 77, 66, 55, 44, 33, 11, 23, 45, 67, 89]
-    #ids = [x for x in range(len(populationAges))]
+    # ids = [x for x in range(len(populationAges))]
     # plt.bar(ids,populationAges)
     bins = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
     plt.hist(populationAges, bins, histtype='bar', rwidth=0.8)
@@ -56,8 +56,8 @@ def plotHistogram():
 
 
 def plotScatter(x, y):
-    #x = [1,2,3,4,5,6,7,8]
-    #y = [3,5,6,7,5,4,3,4]
+    # x = [1,2,3,4,5,6,7,8]
+    # y = [3,5,6,7,5,4,3,4]
     plt.scatter(x, y, label='scatter', color='blue', s=5, marker='*')
     plt.xlabel('x')
     plt.ylabel('y')
@@ -180,4 +180,29 @@ def plotCustomize():
     plt.ylabel('y')
     plt.legend()
     plt.subplots_adjust(left=0.09, bottom=0.18, right=0.94, top=0.80, wspace=0.2, hspace=0)
+    plt.show()
+
+
+def level_curves():
+    import scipy.interpolate
+    N = 1000  # number of points for plotting/interpolation
+    x, y, z = np.genfromtxt(
+        r'/home/jonasmaziero/Dropbox/Research/qnesses/interplay/dipolar/dipolarCalc/EErhotpi2.dat', unpack=True)
+    xll = x.min()
+    xul = x.max()
+    yll = y.min()
+    yul = y.max()
+    xi = np.linspace(xll, xul, N)
+    yi = np.linspace(yll, yul, N)
+    zi = scipy.interpolate.griddata(
+        (x, y), z, (xi[None, :], yi[:, None]), method='linear', rescale=False)
+    contours = plt.contour(xi, yi, zi, 6, colors='black')
+    plt.clabel(contours, inline=True, fontsize=7)
+    plt.imshow(zi, extent=[xll, xul, yll, yul], origin='lower', cmap=plt.cm.jet, alpha=0.9)
+    plt.xlabel(r'$w$')
+    plt.ylabel(r'$p$')
+    plt.clim(0, 1)
+    # plt.colorbar()
+    plt.savefig('/home/jonasmaziero/Dropbox/Research/qnesses/interplay/dipolar/dipolarCalc/EErhotpi2.eps',
+                format='eps', dpi=100)
     plt.show()

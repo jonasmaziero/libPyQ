@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from matFunc import proj, Dagger
 from states import Bell, rho1qb
 from entanglement import concurrence
-import conc
 
 
 def Epsi(tha, thb, D, t):
@@ -35,7 +34,7 @@ def Erho(a, b, D, t):
                           [0, 1-a*b+(a-b)*np.cos(2*D*t), 1j*(a-b)*np.sin(2*D*t), 0],
                           [0, -1j*(a-b)*np.sin(2*D*t), 1-a*b-(a-b)*np.cos(2*D*t), 0],
                           [0, 0, 0, (1-a)*(1-b)]])
-    cc = conc.concurrence_2qb(rho3)
+    cc = concurrence(rho3)
     return cc
 
 

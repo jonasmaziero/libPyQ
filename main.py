@@ -1,2 +1,2 @@
-import states
-print(states.Bell(1, 0))
+import rug
+rug.test()

@@ -33,10 +33,10 @@ def rdm_std(d):
     for j in range(0, d):
         for k in range(j, d):
             for l in range(0, d):
-                rdm[j][k] = rdm[j][k] + rpv[l]*(ru[j][l].real*ru[k][l].real
-                                                + ru[j][l].imag*ru[k][l].imag
-                                                + (1j)*(ru[j][l].imag*ru[k][l].real
-                                                        - ru[j][l].real*ru[k][l].imag))
+                rdm[j][k] = rdm[j][k] + rpv[l]*ru[j][l].real*ru[k][l].real
+                rdm[j][k] = rdm[j][k] + rpv[l]*ru[j][l].imag*ru[k][l].imag
+                rdm[j][k] = rdm[j][k] + rpv[l]*(1j)*ru[j][l].imag*ru[k][l].real
+                rdm[j][k] = rdm[j][k] - rpv[l]*(1j)*ru[j][l].real*ru[k][l].imag
                 if j != k:
                     rdm[k][j] = rdm[j][k].real - (1j)*rdm[j][k].imag
     return rdm
@@ -51,10 +51,10 @@ def rdm_ginibre(d):
     for j in range(0, d):
         for k in range(j, d):
             for l in range(0, d):
-                rdm[j][k] = rdm[j][k] + (G[j][l].real)*(G[k][l].real)
-                    + (G[j][l].imag)*(G[k][l].imag)
-                        - (1j)*((G[j][l].real)*(G[k][l].imag)
-                                - (G[j][l].imag)*(G[k][l].real))
+                rdm[j][k] = rdm[j][k] + (G[j][l].real)*(G[k][l].real) \
+                    + (G[j][l].imag)*(G[k][l].imag) \
+                    - (1j)*((G[j][l].real)*(G[k][l].imag)
+                            - (G[j][l].imag)*(G[k][l].real))
             rdm[j][k] = rdm[j][k]/N2
             if j != k:
                 rdm[k][j] = rdm[j][k].real - (1j)*rdm[j][k].imag

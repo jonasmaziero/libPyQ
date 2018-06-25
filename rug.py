@@ -48,8 +48,6 @@ def test():
 
 
 def ru_gram_schmidt(d):
-    # Returns a dxd random unitary matrix by applying the Gram-Schmidt procedure to a random gaussian complex matrix
-
     from rdmg import ginibre
     G = ginibre(d)
     ru = gram_schmidt_modified(d, G)
@@ -57,8 +55,6 @@ def ru_gram_schmidt(d):
 
 
 def gram_schmidt_modified(d, G):
-    # Returns, in the coloumns of B, an orthonormal basis obtained from linearly independent vectors given as imput in the columns of A
-
     from distances import norm, inner
     from numpy import zeros
     B = zeros((d, d), dtype=complex)
@@ -68,4 +64,3 @@ def gram_schmidt_modified(d, G):
             for k in range(j+1, d):
                 G[:][k] = G[:][k] - inner(d, B[:][j], G[:][k])*B[:][j]
     return B
-#------------------------------------------------------------------------------------------------------------------------------------
