@@ -1,7 +1,7 @@
 def test():
     from numpy import random, zeros
     random.seed()
-    from coherence import coh_l1n, coh_re
+    from coherence import coh_re  # , coh_l1n
     ns = 10**3  # number of samples for the average
     nqb = 5  # maximum number of qubits regarded
     Cavg = zeros(nqb)
@@ -11,9 +11,10 @@ def test():
         rdm = zeros((d[j], d[j]), dtype=complex)
         Cavg[j] = 0.0
         for k in range(0, ns):
-            #rdm = rdm_ginibre(d[j])
-            rdm = rdm_std(d[j])
+            rdm = rdm_ginibre(d[j])
+#            rdm = rdm_std(d[j])
             Cavg[j] = Cavg[j] + coh_re(d[j], rdm)
+            #ind =+ 2*d[j]**2
         Cavg[j] = Cavg[j]/ns
     import matplotlib.pyplot as plt
     plt.plot(d, Cavg, label='')

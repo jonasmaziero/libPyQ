@@ -38,8 +38,8 @@ def tomo_2qb(path):
     CM[3][0] = ((pZZ[0][1] + pZZ[2][1]) - (pZZ[1][1] + pZZ[3][1]))/ns
     CM[0][3] = ((pZZ[0][1] + pZZ[1][1]) - (pZZ[2][1] + pZZ[3][1]))/ns
     # print(CM.real)
-    from states import rho_2qb
-    rho = rho_2qb(CM)
+    from states import rho2qb
+    rho = rho2qb(CM)
     return rho
 
 
@@ -55,9 +55,11 @@ def plot_rho2qb(rho):
     result = np.array(result, dtype=np.float)
     fig = plt.figure(figsize=(5, 5), dpi=150)
     ax1 = fig.add_subplot(111, projection='3d')
-    xlabels = np.array([r'$|00\rangle$', r'$|01\rangle$', r'$|10\rangle$', r'$|11\rangle$'])
+    xlabels = np.array([r'$|00\rangle$', r'$|01\rangle$',
+                        r'$|10\rangle$', r'$|11\rangle$'])
     xpos = np.arange(xlabels.shape[0])
-    ylabels = np.array([r'$|00\rangle$', r'$|01\rangle$', r'$|10\rangle$', r'$|11\rangle$'])
+    ylabels = np.array([r'$|00\rangle$', r'$|01\rangle$',
+                        r'$|10\rangle$', r'$|11\rangle$'])
     ypos = np.arange(ylabels.shape[0])
     xposM, yposM = np.meshgrid(xpos, ypos, copy=False)
     zpos = result

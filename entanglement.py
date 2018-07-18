@@ -74,7 +74,7 @@ def concurrence(rho):
     return C
 '''
 
-'''
+
 def EoF(rho):
     from numpy import zeros
     pv = zeros(2)
@@ -98,6 +98,3 @@ def log_negativity(d, rhoTp):
     En = negativity(d, rhoTp)
     Eln = log(2.0*En+1.0, 2)
     return Eln
-'''
-
-# test_entanglement()

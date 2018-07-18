@@ -40,15 +40,19 @@ def rho1qb(r1, r2, r3):
 
 
 def rho2qb(CM):
-    return (1/4)*(CM[0][0]*np.kron(Pauli(0), Pauli(0)) + CM[1][0]*np.kron(Pauli(1), Pauli(0))
-                  + CM[2][0]*np.kron(Pauli(2), Pauli(0)) + CM[3][0]*np.kron(Pauli(3), Pauli(0))
-                  + CM[0][1]*np.kron(Pauli(0), Pauli(1)) + CM[1][1]*np.kron(Pauli(1), Pauli(1))
-                  + CM[2][1]*np.kron(Pauli(2), Pauli(1)) + CM[3][1]*np.kron(Pauli(3), Pauli(1))
-                  + CM[0][2]*np.kron(Pauli(0), Pauli(2)) + CM[1][2]*np.kron(Pauli(1), Pauli(2))
-                  + CM[2][2]*np.kron(Pauli(2), Pauli(2)) + CM[3][2]*np.kron(Pauli(3), Pauli(2))
-                  + CM[0][3]*np.kron(Pauli(0), Pauli(3)) + CM[1][3]*np.kron(Pauli(1), Pauli(3))
-                  + CM[2][3]*np.kron(Pauli(2), Pauli(3)) + CM[3][3]*np.kron(Pauli(3), Pauli(3)))
-
-
-#print(Dagger(Bell(1, 1)))
-#print(rho1qb(0, 0, 0))
+    return (1/4)*(CM[0][0]*np.kron(Pauli(0), Pauli(0))
+                  + CM[1][0]*np.kron(Pauli(1), Pauli(0))
+                  + CM[2][0]*np.kron(Pauli(2), Pauli(0))
+                  + CM[3][0]*np.kron(Pauli(3), Pauli(0))
+                  + CM[0][1]*np.kron(Pauli(0), Pauli(1))
+                  + CM[1][1]*np.kron(Pauli(1), Pauli(1))
+                  + CM[2][1]*np.kron(Pauli(2), Pauli(1))
+                  + CM[3][1]*np.kron(Pauli(3), Pauli(1))
+                  + CM[0][2]*np.kron(Pauli(0), Pauli(2))
+                  + CM[1][2]*np.kron(Pauli(1), Pauli(2))
+                  + CM[2][2]*np.kron(Pauli(2), Pauli(2))
+                  + CM[3][2]*np.kron(Pauli(3), Pauli(2))
+                  + CM[0][3]*np.kron(Pauli(0), Pauli(3))
+                  + CM[1][3]*np.kron(Pauli(1), Pauli(3))
+                  + CM[2][3]*np.kron(Pauli(2), Pauli(3))
+                  + CM[3][3]*np.kron(Pauli(3), Pauli(3)))
