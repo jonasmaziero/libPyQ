@@ -1,3 +1,5 @@
+
+
 def discord_oz_bds(rho):
     # Returns the OLLIVIER-ZUREK discord for 2-qubit Bell-diagonal states
     D = mi_bds(rho) - ccorr_hv_bds(rho)
@@ -30,9 +32,10 @@ def mi_bds(rho):
                l10*log(4.0*l10, 2) + l11*log(4.0*l11, 2))
     return mi
 
-'''
+
 def test_discord():
     from numpy import zeros
+    '''
   vp = zeros(100)
   CC1 = zeros(100);  MI1 = zeros(100);  DD1 = zeros(100)
   CC2 = zeros(100);  MI2 = zeros(100);  DD2 = zeros(100)
@@ -76,6 +79,7 @@ def test_discord():
   plt.xlabel('p')
   plt.legend()
   plt.show()
+  '''
     from math import cos
     F1 = zeros(100)
     F2 = zeros(100)
@@ -164,4 +168,3 @@ def test_discord():
     plt.xlabel('theta')
     plt.legend()
     plt.show()
-    '''

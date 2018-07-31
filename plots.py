@@ -1,7 +1,5 @@
-#-------------------------------------------------------------------------------
 import matplotlib.pyplot as plt
 import numpy as np
-#-------------------------------------------------------------------------------
 
 
 def plot2d(x, y):
@@ -44,9 +42,10 @@ def plotBar():
 
 def plotHistogram():
     populationAges = [22, 55, 62, 45, 21, 22, 34, 42, 42, 4, 99, 102, 55,
-                      44, 66, 77, 33, 22, 99, 88, 77, 66, 55, 44, 33, 11, 23, 45, 67, 89]
-    # ids = [x for x in range(len(populationAges))]
-    # plt.bar(ids,populationAges)
+                      44, 66, 77, 33, 22, 99, 88, 77, 66, 55, 44, 33, 11, 23,
+                      45, 67, 89]
+#    ids = [x for x in range(len(populationAges))]
+#    plt.bar(ids,populationAges)
     bins = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
     plt.hist(populationAges, bins, histtype='bar', rwidth=0.8)
     plt.xlabel('x')
@@ -187,7 +186,8 @@ def level_curves():
     import scipy.interpolate
     N = 1000  # number of points for plotting/interpolation
     x, y, z = np.genfromtxt(
-        r'/home/jonasmaziero/Dropbox/Research/qnesses/interplay/dipolar/dipolarCalc/EErhotpi2.dat', unpack=True)
+        r'/home/jonasmaziero/Dropbox/Research/qnesses/interplay/dipolar/dipolarCalc/EErhotpi2.dat',
+        unpack=True)
     xll = x.min()
     xul = x.max()
     yll = y.min()

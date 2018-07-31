@@ -3,7 +3,7 @@ def tomo_2qb(path):
     ns = 8192.0
     CM = zeros((4, 4))
     CM[0][0] = 1.0
-    #path = "/Users/jonasmaziero/Dropbox/Research/IBM_QC/scp_tel/experiment/tomography_BDS/c1_06/"
+#    path = "/Users/jonasmaziero/Dropbox/Research/IBM_QC/scp_tel/experiment/tomography_BDS/c1_06/"
     fname = path + "XX.csv"
     pXX = genfromtxt(fname, delimiter=",", skip_header=1)
     CM[1][1] = ((pXX[0][1] + pXX[3][1]) - (pXX[1][1] + pXX[2][1]))/ns
@@ -66,6 +66,10 @@ def plot_rho2qb(rho):
     dx = 0.5
     dy = 0.5
     dz = zpos
+    ax1.set_xlim(0, 3.5)
+    ax1.set_ylim(0, 3.5)
+    ax1.set_zlim(-0.5, 0.5)
+    ax1.view_init(elev=10, azim=-30)
     ax1.w_xaxis.set_ticks(xpos + dx/2.0)
     ax1.w_xaxis.set_ticklabels(xlabels)
     ax1.w_yaxis.set_ticks(ypos + dy/2.0)
@@ -88,7 +92,7 @@ def tomo_1qb(path):
     fname = path + "Z.csv"
     pZ = genfromtxt(fname, delimiter=",", skip_header=1)
     r3 = (pZ[0][1] - pZ[1][1])/ns
-    #print(r1, r2, r3)
+#    print(r1, r2, r3)
     from states import rho_1qb
     rho = rho_1qb(r1, r2, r3)
     return rho
@@ -96,7 +100,7 @@ def tomo_1qb(path):
 
 def plot_rho1qb(rho):
     import numpy as np
-    from mpl_toolkits.mplot3d import Axes3D
+#    from mpl_toolkits.mplot3d import Axes3D
     import matplotlib.pyplot as plt
     from matplotlib import cm
     result = [rho[0][0], rho[0][1],
