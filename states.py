@@ -1,7 +1,7 @@
 from math import sqrt
 import numpy as np
 from su import Pauli
-from matFunc import proj  # , Dagger
+from mat_func import proj  # , Dagger
 
 
 def Bell(j, k):

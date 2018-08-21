@@ -3,7 +3,7 @@ def tomo_2qb(path):
     ns = 8192.0
     CM = zeros((4, 4))
     CM[0][0] = 1.0
-#    path = "/Users/jonasmaziero/Dropbox/Research/IBM_QC/scp_tel/experiment/tomography_BDS/c1_06/"
+    #path = "/Users/jonasmaziero/Dropbox/Research/IBM_QC/scp_tel/experiment/tomography_BDS/c1_06/"
     fname = path + "XX.csv"
     pXX = genfromtxt(fname, delimiter=",", skip_header=1)
     CM[1][1] = ((pXX[0][1] + pXX[3][1]) - (pXX[1][1] + pXX[2][1]))/ns
@@ -100,7 +100,7 @@ def tomo_1qb(path):
 
 def plot_rho1qb(rho):
     import numpy as np
-#    from mpl_toolkits.mplot3d import Axes3D
+    from mpl_toolkits.mplot3d import Axes3D
     import matplotlib.pyplot as plt
     from matplotlib import cm
     result = [rho[0][0], rho[0][1],

@@ -100,4 +100,4 @@ def log_negativity(d, rhoTp):
     return Eln
 
 
-test_entanglement()
+# test_entanglement()

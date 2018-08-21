@@ -49,7 +49,6 @@ def pTraceL(dl, dr, rhoLR):
             if j != k:
                 rhoB[k][j] = np.conj(rhoB[j][k])
     return rhoB
-#-------------------------------------------------------------------------------
 
 
 def pTraceR(dl, dr, rhoLR):
@@ -62,7 +61,6 @@ def pTraceR(dl, dr, rhoLR):
         if j != k:
             rhoA[k][j] = np.conj(rhoA[j][k])
     return rhoA
-#-------------------------------------------------------------------------------
 
 
 def pTraceM(dl, dm, dr, rhoLMR):
@@ -80,4 +78,3 @@ def pTraceM(dl, dm, dr, rhoLMR):
                     for k in range(0, dm):
                         rhoLR[cj][ck] += rhoLMR[ccj+k*dr][cck+k*dr]
     return rhoLR
-#-------------------------------------------------------------------------------

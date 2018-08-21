@@ -1,3 +1,4 @@
+'''
 import states
 import tomography
 import numpy as np
@@ -14,3 +15,7 @@ rho = tomography.tomo_2qb(path)
 
 tomography.plot_rho2qb(rho.real)
 # tomography.plot_rho2qb(rho.imag)
+'''
+
+import ibmqe
+ibmqe.werner()

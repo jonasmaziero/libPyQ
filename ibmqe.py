@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.linalg.lapack as lapak
+from mpl_toolkits.mplot3d import Axes3D
 
 
 def bdsCorr():
@@ -60,7 +61,6 @@ def bdsCorr():
         eigE = lapak.zheevd(rhopE)
         print('eigensE:', eigE[0][0], eigE[0][1], eigE[0][2], eigE[0][3])
         print('di =', di[j], '  diE = ', diE[j])'''
-
     plt.plot(pv, di, label='di')
     plt.plot(pv, cc, label='cc')
     plt.plot(pv, mi, label='im')
@@ -71,28 +71,38 @@ def bdsCorr():
 
 def werner():
     import tomography as tomo
-    import pTranspose as Tp
     rhoE = np.zeros((4, 4), dtype=complex)
     import entanglement as ent
-    N = 14
-    wv = np.array([0, 0.1, 0.2, 0.3, 0.32,
-                   0.34, 0.36, 0.38, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-    Ev = np.zeros(N)
-    for j in range(0, N):
+    Ne = 15
+    we = np.array([0, 0.1, 0.2, 0.3, 0.32,
+                   0.34, 0.36, 0.38, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+    Ee = np.zeros(Ne)
+    for j in range(0, Ne):
         sj = str(j)
         path1 = '/home/jonasmaziero/Dropbox/Research/ibm/bds/'
         path2 = 'werner_qx2/dados_plot/'
         path = path1 + path2 + sj + '/'
-        rhoE = tomo.tomo_2qb(path)
-#        Ev[j] = ent.concurrence(rhoE)
-        Ev[j] = 2*ent.negativity(4, Tp.pTransposeL(2, 2, rhoE))
-        '''if j == 13:
-            print(wv[j], Ev[j])
-            tomo.plot_rho2qb(rhoE)'''
-    plt.plot(wv, Ev, label='E')
+        rhoe = tomo.tomo_2qb(path)
+        Ee[j] = ent.concurrence(rhoe)
+    Nt = 100
+    Et = np.zeros(Nt)
+    wt = np.zeros(Nt)
+    from states import Werner
+    dw = 1.01/Nt
+    w = -dw
+    for j in range(0, Nt):
+        w = w + dw
+        if w > 1.0:
+            break
+        rho = Werner(w)
+        Et[j] = ent.concurrence(rho)
+        wt[j] = w
+
+    plt.plot(we, Ee, label='Ee')
+    plt.plot(wt, Et, label='Et')
     plt.xlabel('w')
     plt.legend()
     plt.show()
 
 
-werner()
+# werner()
