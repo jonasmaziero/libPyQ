@@ -71,12 +71,20 @@ def bdsCorr():
 
 def werner():
     import tomography as tomo
-    rhoE = np.zeros((4, 4), dtype=complex)
+    import coherence as coh
     import entanglement as ent
-    Ne = 15
-    we = np.array([0, 0.1, 0.2, 0.3, 0.32,
-                   0.34, 0.36, 0.38, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+    from distances import fidelity_mm
+    from states import Werner
+    Ne = 11
+#    we = np.array([0, 0.1, 0.2, 0.3, 0.32,
+#                   0.34, 0.36, 0.38, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+    we = np.array([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
     Ee = np.zeros(Ne)
+    Cnle = np.zeros(Ne)
+    Nle = np.zeros(Ne)
+    Se = np.zeros(Ne)
+    De = np.zeros(Ne)
+    F = np.zeros(Ne)
     for j in range(0, Ne):
         sj = str(j)
         path1 = '/home/jonasmaziero/Dropbox/Research/ibm/bds/'
@@ -84,10 +92,18 @@ def werner():
         path = path1 + path2 + sj + '/'
         rhoe = tomo.tomo_2qb(path)
         Ee[j] = ent.concurrence(rhoe)
+        Cnle[j] = coh.coh_nl(2, 2, rhoe)
+        Nle[j] = ent.chsh(rhoe)
+        Se[j] = ent.steering(rhoe)
+        De[j] = ent.hellinger(2, 2, rhoe)
+        F[j] = fidelity_mm(4, Werner(j*0.1), rhoe)
     Nt = 100
     Et = np.zeros(Nt)
+    Nlt = np.zeros(Nt)
+    St = np.zeros(Nt)
+    Cnlt = np.zeros(Nt)
     wt = np.zeros(Nt)
-    from states import Werner
+    Dt = np.zeros(Nt)
     dw = 1.01/Nt
     w = -dw
     for j in range(0, Nt):
@@ -96,13 +112,93 @@ def werner():
             break
         rho = Werner(w)
         Et[j] = ent.concurrence(rho)
+        Cnlt[j] = coh.coh_nl(2, 2, rho)
+        Nlt[j] = ent.chsh(rho)
+        St[j] = ent.steering(rho)
+        Dt[j] = ent.hellinger(2, 2, rho)
         wt[j] = w
-
-    plt.plot(we, Ee, label='Ee')
-    plt.plot(wt, Et, label='Et')
+    plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
+    plt.plot(we, Cnle, '*', label=r'$C_{e}$', color='gray')
+    plt.plot(wt, Dt, '-', label='D', color='magenta')
+    plt.plot(we, De, 'o', label=r'$D_{e}$', color='magenta')
+    plt.plot(wt, Et, '-.', label='E', color='blue')
+    plt.plot(we, Ee, 's', label=r'$E_{e}$', color='blue')
+    plt.plot(wt, St, ':', label='$S$', color='red')
+    plt.plot(we, Se, '^', label=r'$S_{e}$', color='red')
+    plt.plot(wt, Nlt, '--', label='$N$', color='cyan')
+    plt.plot(we, Nle, 'h', label=r'$N_{e}$', color='cyan')
+    plt.plot(we, F, 'X', label=r'$F$', color='black')
     plt.xlabel('w')
-    plt.legend()
+    plt.legend(loc=6)
+    import platform
+    if platform.system() == 'Linux':
+        plt.savefig('/home/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr.eps',
+                    format='eps', dpi=100)
+    else:
+        plt.savefig('/Users/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr.eps',
+                    format='eps', dpi=100)
     plt.show()
 
 
-# werner()
+def werner_decoh():
+    import coherence as coh
+    import entanglement as ent
+    from distances import fidelity_mm
+    from states import Werner
+    from decoherence import werner_pdad
+    Nt = 100
+    wt = np.zeros(Nt)
+    Et = np.zeros(Nt)
+    Nlt = np.zeros(Nt)
+    St = np.zeros(Nt)
+    Cnlt = np.zeros(Nt)
+    Dt = np.zeros(Nt)
+    Etd = np.zeros(Nt)
+    Nltd = np.zeros(Nt)
+    Std = np.zeros(Nt)
+    Cnltd = np.zeros(Nt)
+    Dtd = np.zeros(Nt)
+    F = np.zeros(Nt)
+    p = 0.25
+    a = 0.25
+    dw = 1.01/Nt
+    w = -dw
+    for j in range(0, Nt):
+        w = w + dw
+        if w > 1.0:
+            break
+        rho = Werner(w)
+        Et[j] = ent.concurrence(rho)
+        Cnlt[j] = coh.coh_nl(2, 2, rho)
+        Nlt[j] = ent.chsh(rho)
+        St[j] = ent.steering(rho)
+        Dt[j] = ent.hellinger(2, 2, rho)
+        wt[j] = w
+        rhod = werner_pdad(w, p, a)
+        Etd[j] = ent.concurrence(rhod)
+        Cnltd[j] = coh.coh_nl(2, 2, rhod)
+        Nltd[j] = ent.chsh(rhod)
+        Std[j] = ent.steering(rhod)
+        Dtd[j] = ent.hellinger(2, 2, rhod)
+#        F[j] = fidelity_mm(4, Werner(j*0.1), rhod)
+    plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
+    plt.plot(wt, Cnltd, '*', markersize=4, label=r'$C_{d}$', color='gray')
+    plt.plot(wt, Dt, '-', label='D', color='magenta')
+    plt.plot(wt, Dtd, 'o', markersize=4, label=r'$D_{d}$', color='magenta')
+    plt.plot(wt, Et, '-.', label='E', color='blue')
+    plt.plot(wt, Etd, 's', markersize=4, label=r'$E_{d}$', color='blue')
+    plt.plot(wt, St, ':', label='$S$', color='red')
+    plt.plot(wt, Std, '^', markersize=4, label=r'$S_{d}$', color='red')
+    plt.plot(wt, Nlt, '--', label='$N$', color='cyan')
+    plt.plot(wt, Nltd, 'h', markersize=4, label=r'$N_{d}$', color='cyan')
+#    plt.plot(wt, F, 'X', label=r'$F$', color='black')
+    plt.xlabel('w')
+    plt.legend(loc=6)
+    import platform
+    if platform.system() == 'Linux':
+        plt.savefig('/home/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr_decoh025.eps',
+                    format='eps', dpi=100)
+    else:
+        plt.savefig('/Users/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr_decoh025.eps',
+                    format='eps', dpi=100)
+    plt.show()

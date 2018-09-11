@@ -10,6 +10,3 @@ def Pauli(j):
         return np.array([[0, -1j], [1j, 0]])
     elif j == 3:
         return np.array([[1, 0], [0, -1]])
-
-
-#print(np.matmul(Pauli(0), Pauli(1)))

@@ -1,6 +1,6 @@
 import numpy as np
 
-
+'''
 def pTraceTest():
     dl = 2
     dm = 2
@@ -37,6 +37,14 @@ def pTraceTest():
     print('from the wrapper')
     rhoLR = ptrace.partial_trace_3(rho, dl, dm, dr)
     print(np.matrix(rhoLR))
+'''
+
+
+def trace(d, A):
+    tr = 0
+    for j in range(0, d):
+        tr += A[j, j]
+    return tr
 
 
 def pTraceL(dl, dr, rhoLR):

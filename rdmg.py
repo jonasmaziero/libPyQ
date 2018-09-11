@@ -1,22 +1,25 @@
+import numpy as np
+
+
 def test():
-    from numpy import random, zeros
-    random.seed()
-    from coherence import coh_re  # , coh_l1n
+    np.random.seed()
+    import coherence as coh
+    import matplotlib.pyplot as plt
     ns = 10**3  # number of samples for the average
     nqb = 5  # maximum number of qubits regarded
-    Cavg = zeros(nqb)
-    d = zeros(nqb, dtype=int)
+    Cavg = np.zeros(nqb)
+    d = np.zeros(nqb, dtype=int)
     for j in range(0, nqb):
         d[j] = 2**(j+1)
-        rdm = zeros((d[j], d[j]), dtype=complex)
+        rdm = np.zeros((d[j], d[j]), dtype=complex)
         Cavg[j] = 0.0
         for k in range(0, ns):
-            rdm = rdm_ginibre(d[j])
-#            rdm = rdm_std(d[j])
-            Cavg[j] = Cavg[j] + coh_re(d[j], rdm)
-            #ind =+ 2*d[j]**2
+            # rdm = rdm_ginibre(d[j])
+            rdm = rdm_std(d[j])
+            Cavg[j] += coh.coh_re(d[j], rdm)
+            # Cavg[j] += coh.coh_l1(d[j], rdm)
         Cavg[j] = Cavg[j]/ns
-    import matplotlib.pyplot as plt
+        print(Cavg[j])
     plt.plot(d, Cavg, label='')
     plt.xlabel('d')
     plt.ylabel('C')
@@ -25,11 +28,10 @@ def test():
 
 
 def rdm_std(d):
-    from numpy import zeros
-    rdm = zeros((d, d), dtype=complex)
     from rpvg import rpv_zhsl
-    rpv = rpv_zhsl(d)
     from rug import ru_gram_schmidt
+    rdm = np.zeros((d, d), dtype=complex)
+    rpv = rpv_zhsl(d)
     ru = ru_gram_schmidt(d)
     for j in range(0, d):
         for k in range(j, d):
@@ -44,10 +46,9 @@ def rdm_std(d):
 
 
 def rdm_ginibre(d):
-    from numpy import zeros
-    rdm = zeros((d, d), dtype=complex)
-    G = ginibre(d)
     from distances import normHS
+    rdm = np.zeros((d, d), dtype=complex)
+    G = ginibre(d)
     N2 = (normHS(d, G))**2.0
     for j in range(0, d):
         for k in range(j, d):
@@ -63,11 +64,10 @@ def rdm_ginibre(d):
 
 
 def ginibre(d):
-    from numpy import random, zeros
-    G = zeros((d, d), dtype=complex)
+    G = np.zeros((d, d), dtype=complex)
     mu, sigma = 0.0, 1.0
     for j in range(0, d):
-        grn = random.normal(mu, sigma, 2*d)
+        grn = np.random.normal(mu, sigma, 2*d)
         for k in range(0, d):
             G[j][k] = grn[k] + (1j)*grn[k+d]
     return G

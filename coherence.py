@@ -22,6 +22,6 @@ def coh_re(d, rho):
 
 
 def coh_nl(da, db, rho):
-    rhoa = pTrace.ptraceL(da, db, rho)
-    rhob = pTrace.ptraceR(da, db, rho)
+    rhoa = pTrace.pTraceL(da, db, rho)
+    rhob = pTrace.pTraceR(da, db, rho)
     return coh_l1(da*db, rho)-coh_l1(da, rhoa)-coh_l1(db, rhob)
