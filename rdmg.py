@@ -1,6 +1,6 @@
 import numpy as np
 
-
+'''
 def test():
     np.random.seed()
     import coherence as coh
@@ -25,6 +25,7 @@ def test():
     plt.ylabel('C')
     plt.legend()
     plt.show()
+'''
 
 
 def rdm_std(d):

@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.linalg.lapack as lapak
 from mpl_toolkits.mplot3d import Axes3D
+import pTranspose as pT
+import discord
 
 
 def bdsCorr():
@@ -9,9 +11,9 @@ def bdsCorr():
     c1 = -0.9
     c2 = -0.8
     c3 = -0.8
-    from states import rho_bds
+    from states import rhoBD
     rho = np.zeros((4, 4), dtype=complex)
-    rho = rho_bds(c1, c2, c3)
+    rho = rhoBD(c1, c2, c3)
     eig = lapak.zheevd(rho)
     print('eigens:', eig[0][0], eig[0][1], eig[0][2], eig[0][3])
     import discord
@@ -45,7 +47,7 @@ def bdsCorr():
         alpha = 2.0*acos(sqrt(p00 + p10))
         print("theta = ", theta, ", alpha", alpha)
         print("")
-        rhop = rho_bds(c1p, c2p, c3p)
+        rhop = rhoBD(c1p, c2p, c3p)
         pv[j] = p
         di[j] = discord.discord_oz_bds(rhop)
         cc[j] = discord.ccorr_hv_bds(rhop)
@@ -91,11 +93,13 @@ def werner():
         path2 = 'werner_qx2/dados_plot/'
         path = path1 + path2 + sj + '/'
         rhoe = tomo.tomo_2qb(path)
-        Ee[j] = ent.concurrence(rhoe)
+#        Ee[j] = ent.concurrence(rhoe)
+        Ee[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhoe))
         Cnle[j] = coh.coh_nl(2, 2, rhoe)
         Nle[j] = ent.chsh(rhoe)
         Se[j] = ent.steering(rhoe)
-        De[j] = ent.hellinger(2, 2, rhoe)
+#        De[j] = ent.hellinger(2, 2, rhoe)
+        De[j] = discord.oz_2qb(rhoe)
         F[j] = fidelity_mm(4, Werner(j*0.1), rhoe)
     Nt = 100
     Et = np.zeros(Nt)
@@ -111,11 +115,13 @@ def werner():
         if w > 1.0:
             break
         rho = Werner(w)
-        Et[j] = ent.concurrence(rho)
+#        Et[j] = ent.concurrence(rho)
+        Et[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rho))
         Cnlt[j] = coh.coh_nl(2, 2, rho)
         Nlt[j] = ent.chsh(rho)
         St[j] = ent.steering(rho)
-        Dt[j] = ent.hellinger(2, 2, rho)
+#        Dt[j] = ent.hellinger(2, 2, rho)
+        Dt[j] = discord.oz_2qb(rho)
         wt[j] = w
     plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
     plt.plot(we, Cnle, '*', label=r'$C_{e}$', color='gray')
@@ -158,7 +164,6 @@ def werner_decoh():
     Std = np.zeros(Nt)
     Cnltd = np.zeros(Nt)
     Dtd = np.zeros(Nt)
-    F = np.zeros(Nt)
     p = 0.25
     a = 0.25
     dw = 1.01/Nt
@@ -168,19 +173,22 @@ def werner_decoh():
         if w > 1.0:
             break
         rho = Werner(w)
-        Et[j] = ent.concurrence(rho)
+#        Et[j] = ent.concurrence(rho)
+        Et[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rho))
         Cnlt[j] = coh.coh_nl(2, 2, rho)
         Nlt[j] = ent.chsh(rho)
         St[j] = ent.steering(rho)
-        Dt[j] = ent.hellinger(2, 2, rho)
+#        Dt[j] = ent.hellinger(2, 2, rho)
+        Dt[j] = discord.oz_2qb(rho)
         wt[j] = w
         rhod = werner_pdad(w, p, a)
-        Etd[j] = ent.concurrence(rhod)
+#        Etd[j] = ent.concurrence(rhod)
+        Etd[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhod))
         Cnltd[j] = coh.coh_nl(2, 2, rhod)
         Nltd[j] = ent.chsh(rhod)
         Std[j] = ent.steering(rhod)
-        Dtd[j] = ent.hellinger(2, 2, rhod)
-#        F[j] = fidelity_mm(4, Werner(j*0.1), rhod)
+        Dtd[j] = discord.oz_2qb(rhod)
+#        Dtd[j] = ent.hellinger(2, 2, rhod)
     plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
     plt.plot(wt, Cnltd, '*', markersize=4, label=r'$C_{d}$', color='gray')
     plt.plot(wt, Dt, '-', label='D', color='magenta')
@@ -191,7 +199,6 @@ def werner_decoh():
     plt.plot(wt, Std, '^', markersize=4, label=r'$S_{d}$', color='red')
     plt.plot(wt, Nlt, '--', label='$N$', color='cyan')
     plt.plot(wt, Nltd, 'h', markersize=4, label=r'$N_{d}$', color='cyan')
-#    plt.plot(wt, F, 'X', label=r'$F$', color='black')
     plt.xlabel('w')
     plt.legend(loc=6)
     import platform
@@ -199,6 +206,6 @@ def werner_decoh():
         plt.savefig('/home/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr_decoh025.eps',
                     format='eps', dpi=100)
     else:
-        plt.savefig('/Users/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr_decoh025.eps',
+        plt.savefig('/Users/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr_decoh099.eps',
                     format='eps', dpi=100)
     plt.show()

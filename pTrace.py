@@ -1,44 +1,5 @@
 import numpy as np
 
-'''
-def pTraceTest():
-    dl = 2
-    dm = 2
-    dr = 2
-    d = dl*dm*dr
-    rho = np.zeros((d, d), dtype=complex)
-    rho[1][1] = 1.0/3.0
-    rho[1][2] = 1.0/3.0
-    rho[1][4] = 1.0/3.0
-    rho[2][1] = 1.0/3.0
-    rho[2][2] = 1.0/3.0
-    rho[2][4] = 1.0/3.0
-    rho[4][1] = 1.0/3.0
-    rho[4][2] = 1.0/3.0
-    rho[4][4] = 1.0/3.0
-    rhoR = np.zeros((dr, dr), dtype=complex)
-    rhoR = pTraceL(dl*dm, dr, rho)
-    print(np.matrix(rhoR))
-    print('from the wrapper')
-    import ptrace
-    rhoR = ptrace.partial_trace_a(rho, dl*dm, dr)
-    print(np.matrix(rhoR))
-    print('')
-    rhoL = np.zeros((dl, dl), dtype=complex)
-    rhoL = pTraceR(dl, dm*dr, rho)
-    print(np.matrix(rhoL))
-    print('from the wrapper')
-    rhoL = ptrace.partial_trace_b(rho, dl, dm*dr)
-    print(np.matrix(rhoL))
-    print('')
-    rhoLR = np.zeros((dl*dr, dl*dr), dtype=complex)
-    rhoLR = pTraceM(dl, dm, dr, rho)
-    print(np.matrix(rhoLR))
-    print('from the wrapper')
-    rhoLR = ptrace.partial_trace_3(rho, dl, dm, dr)
-    print(np.matrix(rhoLR))
-'''
-
 
 def trace(d, A):
     tr = 0
@@ -86,3 +47,42 @@ def pTraceM(dl, dm, dr, rhoLMR):
                     for k in range(0, dm):
                         rhoLR[cj][ck] += rhoLMR[ccj+k*dr][cck+k*dr]
     return rhoLR
+
+    '''
+    def pTraceTest():
+        dl = 2
+        dm = 2
+        dr = 2
+        d = dl*dm*dr
+        rho = np.zeros((d, d), dtype=complex)
+        rho[1][1] = 1.0/3.0
+        rho[1][2] = 1.0/3.0
+        rho[1][4] = 1.0/3.0
+        rho[2][1] = 1.0/3.0
+        rho[2][2] = 1.0/3.0
+        rho[2][4] = 1.0/3.0
+        rho[4][1] = 1.0/3.0
+        rho[4][2] = 1.0/3.0
+        rho[4][4] = 1.0/3.0
+        rhoR = np.zeros((dr, dr), dtype=complex)
+        rhoR = pTraceL(dl*dm, dr, rho)
+        print(np.matrix(rhoR))
+        print('from the wrapper')
+        import ptrace
+        rhoR = ptrace.partial_trace_a(rho, dl*dm, dr)
+        print(np.matrix(rhoR))
+        print('')
+        rhoL = np.zeros((dl, dl), dtype=complex)
+        rhoL = pTraceR(dl, dm*dr, rho)
+        print(np.matrix(rhoL))
+        print('from the wrapper')
+        rhoL = ptrace.partial_trace_b(rho, dl, dm*dr)
+        print(np.matrix(rhoL))
+        print('')
+        rhoLR = np.zeros((dl*dr, dl*dr), dtype=complex)
+        rhoLR = pTraceM(dl, dm, dr, rho)
+        print(np.matrix(rhoLR))
+        print('from the wrapper')
+        rhoLR = ptrace.partial_trace_3(rho, dl, dm, dr)
+        print(np.matrix(rhoLR))
+    '''

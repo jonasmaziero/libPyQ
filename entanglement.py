@@ -3,7 +3,7 @@ from numpy import linalg as LA
 from su import Pauli
 from math import sqrt
 
-
+'''
 def test_entanglement():
     #from pTranspose import Ta
     Ec = np.zeros(100)
@@ -34,6 +34,7 @@ def test_entanglement():
     plt.ylabel('')
     plt.legend(loc=4)
     plt.show()
+'''
 
 
 def concurrence(rho):

@@ -1,4 +1,6 @@
-import numpy as np
+from math import log
+import scipy.linalg.lapack as lapak
+import pTrace
 
 
 def purity(d, rho):
@@ -14,7 +16,6 @@ def purity(d, rho):
 
 
 def shannon(d, pv):
-    from math import log
     SE = 0.0
     j = -1
     while (j < d-1):
@@ -25,7 +26,12 @@ def shannon(d, pv):
 
 
 def neumann(d, rho):
-    import scipy.linalg.lapack as lapak
     b = lapak.zheevd(rho)
     VnE = shannon(d, b[0])
     return VnE
+
+
+def mutual_info(rho, dl, dr):
+    rhor = pTrace.pTraceL(dl, dr, rho)
+    rhol = pTrace.pTraceR(dl, dr, rho)
+    return neumann(dr, rhor) + neumann(dl, rhol) - neumann(dl*dr, rho)

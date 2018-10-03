@@ -1,3 +1,52 @@
+import numpy as np
+from math import sin, cos, exp
+from entropy import mutual_info
+from constants import pi
+
+
+def oz_2qb(rho):
+    return mutual_info(rho, 2, 2) - ccorr_hv_2qb(rho)
+
+
+def ccorr_hv_2qb(rho):
+    st = 0.01
+    cc = 0
+    th = -st
+    while th < pi():
+        th += st
+        ph = -st
+        while ph < 2*pi():
+            ph += st
+            mi = mutual_info(rhoMb(rho, th, ph), 2, 2)
+            if mi > cc:
+                cc = mi
+    return cc
+
+
+def rhoMb(rho, th, ph):
+    rm = np.matmul(np.matmul(P1(th, ph), rho), P1(th, ph))
+    rm += np.matmul(np.matmul(P2(th, ph), rho), P2(th, ph))
+    return rm
+
+
+def P1(th, ph):
+    ep = cos(ph) + 1j*sin(ph)
+    en = cos(ph) - 1j*sin(ph)
+    return np.array([[cos(th/2)**2, en*sin(th/2)*cos(th/2), 0, 0],
+                     [ep*sin(th/2)*cos(th/2), sin(th/2)**2, 0, 0],
+                     [0, 0, cos(th/2)**2, en*sin(th/2)*cos(th/2)],
+                     [0, 0, ep*sin(th/2)*cos(th/2), sin(th/2)**2]])
+
+
+def P2(th, ph):
+    ep = cos(ph) + 1j*sin(ph)
+    en = cos(ph) - 1j*sin(ph)
+    return np.array([[sin(th/2)**2, -en*sin(th/2)*cos(th/2), 0, 0],
+                     [-ep*sin(th/2)*cos(th/2), cos(th/2)**2, 0, 0],
+                     [0, 0, sin(th/2)**2, -en*sin(th/2)*cos(th/2)],
+                     [0, 0, -ep*sin(th/2)*cos(th/2), cos(th/2)**2]])
+
+
 def discord_oz_bds(rho):
     # Returns the OLLIVIER-ZUREK discord for 2-qubit Bell-diagonal states
     D = mi_bds(rho) - ccorr_hv_bds(rho)
@@ -29,6 +78,7 @@ def mi_bds(rho):
     mi = float(l00*log(4.0*l00, 2) + l01*log(4.0*l01, 2) +
                l10*log(4.0*l10, 2) + l11*log(4.0*l11, 2))
     return mi
+
 
 '''
 def test_discord():
