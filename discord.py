@@ -1,7 +1,29 @@
 import numpy as np
-from math import sin, cos, exp
+from math import sin, cos
 from entropy import mutual_info
 from constants import pi
+from numpy import linalg as LA
+from math import sqrt
+import gell_mann as gm
+from mat_func import mat_sqrt, transpose, outerr
+from distances import normr
+from pTrace import trace, pTraceL, pTraceR
+
+
+def hellinger(da, db, rho):  # arXiv:1510.06995
+    daa = da**2-1
+    M = mat_sqrt(da*db, rho)
+    A = pTraceR(da, db, M)
+    bva = gm.bloch_vector(da, A)/sqrt(2*db)
+    B = pTraceL(da, db, M)
+    bvb = gm.bloch_vector(db, B)/2
+    cm = gm.corr_mat(da, db, M)/2
+    ev = np.zeros(3)
+    ev = LA.eigvalsh(outerr(daa, bva, bva)+np.matmul(cm, transpose(3, 3, cm)))
+    mev = max(ev[0], ev[1], ev[2])
+    bvbn = normr(2, bvb)
+    nor = 1-1/sqrt(da)
+    return max(0, (1-sqrt((trace(da, A)/sqrt(2*db))**2+bvbn**2+mev))/nor)
 
 
 def oz_2qb(rho):

@@ -1,43 +1,60 @@
 import numpy as np
 from numpy import linalg as LA
-
-
-def Dagger(A):
-    return np.conjugate(np.transpose(A))
-
-
-def transpose(m, n, A):
-    At = np.zeros((n, m))
-    for j in range(0, m):
-        for k in range(0, n):
-            At[k, j] = A[j, k]
-    return At
-
-
-def outer(psi, phi):
-    return psi*np.conjugate(np.transpose(phi))
-
-
-def outerr(psi, phi):
-    return psi*np.transpose(phi)
-
-
-def proj(psi):
-    return np.outer(psi, np.conj(psi))
-
-
-def sandwich(phi, A, psi):
-    return np.dot(np.dot(Dagger(phi), A), phi)
+from math import sqrt
 
 
 def mat_sqrt(d, A):
     w, v = LA.eigh(A)
     Asr = np.zeros((d, d), dtype=complex)
-#    Proj = np.zeros((d,d),dtype=complex)
+    psi = np.zeros((d, 1), dtype=complex)
     for j in range(0, d):
-        Proj = proj(v[:, j])
-        Asr += (np.sqrt(w[j])/np.trace(Proj))*Proj
+        psi = v[:, j]
+        Asr += sqrt(w[j])*proj(d, psi)
     return Asr
+
+
+def adjunct(nr, nc, A):
+    Aa = np.zeros((nc, nr), dtype=complex)
+    for j in range(0, nr):
+        for k in range(0, nc):
+            Aa[k, j] = np.conj(A[j, k])
+    return Aa
+
+
+def transpose(nr, nc, A):
+    At = np.zeros((nc, nr))
+    for j in range(0, nr):
+        for k in range(0, nc):
+            At[k, j] = A[j, k]
+    return At
+
+
+def outer(d, psi, phi):
+    op = np.zeros((d, d), dtype=complex)
+    for j in range(0, d):
+        for k in range(0, d):
+            op[j, k] = psi[j]*np.conj(phi[k])
+    return op
+
+
+def outerr(d, psi, phi):
+    op = np.zeros((d, d))
+    for j in range(0, d):
+        for k in range(0, d):
+            op[j, k] = psi[j]*phi[k]
+    return op
+
+
+def proj(d, psi):
+    return outer(d, psi, psi)
+
+
+def sandwich(d, phi, A, psi):
+    sd = 0
+    for j in range(0, d):
+        for k in range(0, d):
+            sd += np.conj(phi[j])*A[j, k]*psi[k]
+    return sd
 
 
 '''

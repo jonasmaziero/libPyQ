@@ -1,7 +1,7 @@
-from math import sqrt
+from math import sqrt, sin, cos
 import numpy as np
 from su import Pauli
-from mat_func import proj  # , Dagger
+from mat_func import proj
 
 
 def Bell(j, k):
@@ -16,12 +16,13 @@ def Bell(j, k):
 
 
 def Werner(w):
-    return ((1-w)/4)*np.eye(4) + w*proj(Bell(1, 1))
+    return ((1-w)/4)*np.eye(4) + w*proj(4, Bell(1, 1))
 
 
 def rhoBD(c1, c2, c3):
     return (1/4)*(np.eye(4) + c1*np.kron(Pauli(1), Pauli(1))
-                  + c2*np.kron(Pauli(2), Pauli(2)) + c3*np.kron(Pauli(3), Pauli(3)))
+                  + c2*np.kron(Pauli(2), Pauli(2))
+                  + c3*np.kron(Pauli(3), Pauli(3)))
 
 
 def cb(d, j):
@@ -31,8 +32,8 @@ def cb(d, j):
 
 
 def psi1qb(theta, phi):
-    return np.cos(theta/2.0)*cb(2, 0) + (np.cos(phi)
-                                         + np.sin(phi)*1j)*np.sin(theta/2.0)*cb(2, 1)
+    return cos(theta/2.0)*cb(2, 0) + (cos(phi)
+                                      + sin(phi)*1j)*sin(theta/2.0)*cb(2, 1)
 
 
 def rho1qb(r1, r2, r3):
