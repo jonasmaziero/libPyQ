@@ -1,2 +1,2 @@
 import ibmqe
-ibmqe.werner()
+ibmqe.werner_decoh()

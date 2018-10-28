@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-#import scipy.linalg.lapack as lapak
 from mpl_toolkits.mplot3d import Axes3D
 import pTranspose as pT
 import discord
@@ -99,7 +98,7 @@ def werner_decoh():
     Std = np.zeros(Nt)
     Cnltd = np.zeros(Nt)
     Dtd = np.zeros(Nt)
-    p = 0.3
+    p = 0.85
     a = p
     dw = 1.01/Nt
     w = -dw
@@ -113,8 +112,8 @@ def werner_decoh():
         Cnlt[j] = coh.coh_nl(2, 2, rho)
         Nlt[j] = ent.chsh(rho)
         St[j] = ent.steering(rho)
-#        Dt[j] = discord.hellinger(2, 2, rho)
-        Dt[j] = discord.oz_2qb(rho)
+        Dt[j] = discord.hellinger(2, 2, rho)
+#        Dt[j] = discord.oz_2qb(rho)
         wt[j] = w
         rhod = werner_pdad(w, p, a)
 #        Etd[j] = ent.concurrence(rhod)
@@ -122,8 +121,8 @@ def werner_decoh():
         Cnltd[j] = coh.coh_nl(2, 2, rhod)
         Nltd[j] = ent.chsh(rhod)
         Std[j] = ent.steering(rhod)
-#        Dtd[j] = discord.hellinger(2, 2, rhod)
-        Dtd[j] = discord.oz_2qb(rhod)
+        Dtd[j] = discord.hellinger(2, 2, rhod)
+#        Dtd[j] = discord.oz_2qb(rhod)
     plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
     plt.plot(wt, Cnltd, '*', markersize=4, label=r'$C_{d}$', color='gray')
     plt.plot(wt, Dt, '-', label='D', color='magenta')
