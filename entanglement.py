@@ -46,7 +46,8 @@ def chsh(rho):  # arXiv:1510.08030
 #    cm = np.zeros(3, 3)
     cm = gm.corr_mat(2, 2, rho)
     W = np.zeros(3)
-    W = LA.eigvalsh(cm)
+    # W = LA.eigvalsh(cm)
+    u, W, vh = LA.svd(cm, full_matrices=True)
     no = np.sqrt(2)-1
     nl = (sqrt(W[0]**2+W[1]**2+W[2]**2-min(W[0], W[1], W[2])**2)-1)/no
     return max(0, nl)
@@ -57,7 +58,8 @@ def steering(rho):  # arXiv:1510.08030
 #    cm = np.zeros(3,3)
     cm = gm.corr_mat(2, 2, rho)
     W = np.zeros(3)
-    W = LA.eigvalsh(cm)
+    # W = LA.eigvalsh(cm)
+    u, W, vh = LA.svd(cm, full_matrices=True)
     return max(0, (sqrt((W[0]**2)+(W[1]**2)+(W[2]**2))-1)/(sqrt(3)-1))
 
     '''

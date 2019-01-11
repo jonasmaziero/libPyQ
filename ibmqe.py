@@ -3,14 +3,15 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import pTranspose as pT
 import discord
+import coherence as coh
+import entanglement as ent
+from distances import fidelity_mm
+from states import Werner
+from decoherence import werner_pdad
+import tomography as tomo
 
 
 def werner():
-    import tomography as tomo
-    import coherence as coh
-    import entanglement as ent
-    from distances import fidelity_mm
-    from states import Werner
     Ne = 11
 #    we = np.array([0, 0.1, 0.2, 0.3, 0.32,
 #                   0.34, 0.36, 0.38, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
@@ -27,14 +28,14 @@ def werner():
         path2 = 'werner_qx2/dados_plot/'
         path = path1 + path2 + sj + '/'
         rhoe = tomo.tomo_2qb(path)
-#        Ee[j] = ent.concurrence(rhoe)
+        # Ee[j] = ent.concurrence(rhoe)
         Ee[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhoe))
         Cnle[j] = coh.coh_nl(2, 2, rhoe)
         Nle[j] = ent.chsh(rhoe)
         Se[j] = ent.steering(rhoe)
-#        De[j] = discord.hellinger(2, 2, rhoe)
-        De[j] = discord.oz_2qb(rhoe)
-        F[j] = fidelity_mm(4, Werner(j*0.1), rhoe)
+        # De[j] = discord.hellinger(2, 2, rhoe)
+        # De[j] = discord.oz_2qb(rhoe)
+        # F[j] = fidelity_mm(4, Werner(j*0.1), rhoe)
     Nt = 100
     Et = np.zeros(Nt)
     Nlt = np.zeros(Nt)
@@ -42,34 +43,54 @@ def werner():
     Cnlt = np.zeros(Nt)
     wt = np.zeros(Nt)
     Dt = np.zeros(Nt)
+    Etd = np.zeros(Nt)
+    Nltd = np.zeros(Nt)
+    Std = np.zeros(Nt)
+    Cnltd = np.zeros(Nt)
+    Dtd = np.zeros(Nt)
+    p = 0.28
+    a = p
     dw = 1.01/Nt
     w = -dw
     for j in range(0, Nt):
         w = w + dw
         if w > 1.0:
             break
-        rho = Werner(w)
-#        Et[j] = ent.concurrence(rho)
-        Et[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rho))
-        Cnlt[j] = coh.coh_nl(2, 2, rho)
-        Nlt[j] = ent.chsh(rho)
-        St[j] = ent.steering(rho)
-#        Dt[j] = discord.hellinger(2, 2, rho)
-        Dt[j] = discord.oz_2qb(rho)
+        # rho = Werner(w)
+        # Et[j] = ent.concurrence(rho)
+        # Et[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rho))
+        # Cnlt[j] = coh.coh_nl(2, 2, rho)
+        # Nlt[j] = ent.chsh(rho)
+        # St[j] = ent.steering(rho)
+        # Dt[j] = discord.hellinger(2, 2, rho)
+        # Dt[j] = discord.oz_2qb(rho)
+        rhod = werner_pdad(w, p, a)
+        # Etd[j] = ent.concurrence(rhod)
+        Etd[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhod))
+        Cnltd[j] = coh.coh_nl(2, 2, rhod)
+        Nltd[j] = ent.chsh(rhod)
+        Std[j] = ent.steering(rhod)
+        # Dtd[j] = discord.hellinger(2, 2, rhod)
+        # Dtd[j] = discord.oz_2qb(rhod)
         wt[j] = w
-    plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
-    plt.plot(we, Cnle, '*', label=r'$C_{e}$', color='gray')
-    plt.plot(wt, Dt, '-', label='D', color='magenta')
-    plt.plot(we, De, 'o', label=r'$D_{e}$', color='magenta')
-    plt.plot(wt, Et, '-.', label='E', color='blue')
-    plt.plot(we, Ee, 's', label=r'$E_{e}$', color='blue')
-    plt.plot(wt, St, ':', label='$S$', color='red')
-    plt.plot(we, Se, '^', label=r'$S_{e}$', color='red')
-    plt.plot(wt, Nlt, '--', label='$N$', color='cyan')
-    plt.plot(we, Nle, 'h', label=r'$N_{e}$', color='cyan')
-    plt.plot(we, F, 'X', label=r'$F$', color='black')
+    # plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
+    plt.plot(wt, Cnltd, 'H', label='$C_{d}$', color='gray', markersize=5)
+    plt.plot(we, Cnle, '*', label=r'$C_{e}$', color='gray', markersize=10)
+    # plt.plot(wt, Dt, '-', label='D', color='magenta')
+    plt.plot(wt, Dtd, 'X', label='$D_{d}$', color='magenta', markersize=5)
+    plt.plot(we, De, 'o', label=r'$D_{e}$', color='magenta', markersize=10)
+    # plt.plot(wt, Et, '-.', label='E', color='blue')
+    plt.plot(wt, Etd, '4', label='$E_{d}$', color='blue', markersize=5)
+    plt.plot(we, Ee, 's', label=r'$E_{e}$', color='blue', markersize=10)
+    # plt.plot(wt, St, ':', label='$S$', color='red')
+    plt.plot(wt, Std, '+', label='$S_{d}$', color='red', markersize=5)
+    plt.plot(we, Se, '^', label=r'$S_{e}$', color='red', markersize=10)
+    # plt.plot(wt, Nlt, '--', label='$N$', color='cyan')
+    plt.plot(wt, Nltd, '2', label='$N_{d}$', color='cyan', markersize=5)
+    plt.plot(we, Nle, 'h', label=r'$N_{e}$', color='cyan', markersize=10)
+    # plt.plot(we, F, 'X', label=r'$F$', color='black')
     plt.xlabel('w')
-    plt.legend(loc=6)
+    plt.legend(loc=2)
     import platform
     if platform.system() == 'Linux':
         plt.savefig('/home/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr.eps',
@@ -81,11 +102,6 @@ def werner():
 
 
 def werner_decoh():
-    import coherence as coh
-    import entanglement as ent
-    from distances import fidelity_mm
-    from states import Werner
-    from decoherence import werner_pdad
     Nt = 100
     wt = np.zeros(Nt)
     Et = np.zeros(Nt)
@@ -98,7 +114,7 @@ def werner_decoh():
     Std = np.zeros(Nt)
     Cnltd = np.zeros(Nt)
     Dtd = np.zeros(Nt)
-    p = 0.85
+    p = 0.3
     a = p
     dw = 1.01/Nt
     w = -dw
@@ -107,22 +123,22 @@ def werner_decoh():
         if w > 1.0:
             break
         rho = Werner(w)
-#        Et[j] = ent.concurrence(rho)
+        # Et[j] = ent.concurrence(rho)
         Et[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rho))
         Cnlt[j] = coh.coh_nl(2, 2, rho)
         Nlt[j] = ent.chsh(rho)
         St[j] = ent.steering(rho)
-        Dt[j] = discord.hellinger(2, 2, rho)
-#        Dt[j] = discord.oz_2qb(rho)
+        # Dt[j] = discord.hellinger(2, 2, rho)
+        Dt[j] = discord.oz_2qb(rho)
         wt[j] = w
         rhod = werner_pdad(w, p, a)
-#        Etd[j] = ent.concurrence(rhod)
+        # Etd[j] = ent.concurrence(rhod)
         Etd[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhod))
         Cnltd[j] = coh.coh_nl(2, 2, rhod)
         Nltd[j] = ent.chsh(rhod)
         Std[j] = ent.steering(rhod)
-        Dtd[j] = discord.hellinger(2, 2, rhod)
-#        Dtd[j] = discord.oz_2qb(rhod)
+        # Dtd[j] = discord.hellinger(2, 2, rhod)
+        Dtd[j] = discord.oz_2qb(rhod)
     plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
     plt.plot(wt, Cnltd, '*', markersize=4, label=r'$C_{d}$', color='gray')
     plt.plot(wt, Dt, '-', label='D', color='magenta')
