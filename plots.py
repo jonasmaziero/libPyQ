@@ -2,6 +2,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def error_bar():
+    x = [1,2,3,4,5]
+    y = [1,2,3,4,5]
+    yerr = [0.1,0.2,0.2,0.3,0.1]
+    plt.errorbar(x,y,yerr)
+    #plt.plot(x,y)
+    plt.show()
+
+
 def plot2d(x, y):
     # x = [1,2,3]
     # y1 = [1,2,3]

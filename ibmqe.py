@@ -9,34 +9,61 @@ from distances import fidelity_mm
 from states import Werner
 from decoherence import werner_pdad
 import tomography as tomo
+from math import sqrt
 
 
 def werner():
-    Ne = 11
-#    we = np.array([0, 0.1, 0.2, 0.3, 0.32,
-#                   0.34, 0.36, 0.38, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+    Nw = 11 # no. of experiments of each configuration
+    Nr = 5 # no. of rounds of the experiment
     we = np.array([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
-    Ee = np.zeros(Ne)
-    Cnle = np.zeros(Ne)
-    Nle = np.zeros(Ne)
-    Se = np.zeros(Ne)
-    De = np.zeros(Ne)
-    F = np.zeros(Ne)
-    for j in range(0, Ne):
+    Ee = np.zeros(Nw)
+    Eerr = np.zeros(Nw)  # for the standard deviation
+    Cnle = np.zeros(Nw)
+    Cnlerr = np.zeros(Nw)
+    Nle = np.zeros(Nw)
+    Nlerr = np.zeros(Nw)
+    Se = np.zeros(Nw)
+    Serr = np.zeros(Nw)
+    De = np.zeros(Nw)
+    Derr = np.zeros(Nw)
+    Fe = np.zeros(Nw)
+    Ferr = np.zeros(Nw)
+    for j in range(0, Nw):
         sj = str(j)
-        path1 = '/home/jonasmaziero/Dropbox/Research/ibm/bds/'
-        path2 = 'werner_qx2/dados_plot/'
-        path = path1 + path2 + sj + '/'
-        rhoe = tomo.tomo_2qb(path)
-        # Ee[j] = ent.concurrence(rhoe)
-        Ee[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhoe))
-        Cnle[j] = coh.coh_nl(2, 2, rhoe)
-        Nle[j] = ent.chsh(rhoe)
-        Se[j] = ent.steering(rhoe)
+        Em = 0.0;  E2m = 0.0;  Fm = 0.0;  F2m = 0.0;  Cnlm = 0.0;  Cnl2m = 0.0
+        Nlm = 0.0;  Nl2m = 0.0;  Sm = 0.0;  S2m = 0.0;  Dm = 0.0;  D2m = 0.0
+        for k in range(0,Nr):
+            sk = str(k)
+            path1 = '/home/jonas/Dropbox/Research/ibm/bds'
+            #path1 = '/Users/jonasmaziero/Dropbox/Research/ibm/bds'
+            path2 = '/calc_mauro/dados_plot/dados_plot'
+            path = path1 + path2 + sk + '/' + sj + '/'
+            if k == 0:
+                rhoe = tomo.tomo_2qb(path)
+            else:
+                rhoe = tomo.tomo_2qb_(path)
+            E = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhoe))
+            Em += E;  E2m += pow(E,2)
+            F = fidelity_mm(4, Werner(j*0.1), rhoe);  Fm += F;  F2m += pow(F,2)
+            Cnl = coh.coh_nl(2, 2, rhoe);  Cnlm += Cnl;  Cnl2m += pow(Cnl,2)
+            Nl = ent.chsh(rhoe);  Nlm += Nl;  Nl2m += pow(Nl,2)
+            S = ent.steering(rhoe);  Sm += S;  S2m += pow(S,2)
+            #D = discord.oz_2qb(rhoe);  Dm += D;  D2m += pow(D,2)
+        Em = Em/Nr;  E2m = E2m/Nr;  Eerr[j] = sqrt(E2m - pow(Em,2));  Ee[j] = Em
+        Fm = Fm/Nr;  F2m = F2m/Nr;  Ferr[j] = sqrt(F2m - pow(Fm,2));  Fe[j] = Fm
+        Cnlm = Cnlm/Nr;  Cnl2m = Cnl2m/Nr;  Cnlerr[j] = sqrt(Cnl2m - pow(Cnlm,2));  Cnle[j] = Cnlm
+        Nlm = Nlm/Nr;  Nl2m = Nl2m/Nr;  Nlerr[j] = sqrt(Nl2m - pow(Nlm,2));  Nle[j] = Nlm
+        Sm = Sm/Nr;  S2m = S2m/Nr;  Serr[j] = sqrt(S2m - pow(Sm,2));  Se[j] = Sm
+        Dm = Dm/Nr;  D2m = D2m/Nr;  Derr[j] = sqrt(D2m - pow(Dm,2));  De[j] = Dm
+        #F = fidelity_mm(4, Werner(j*0.1), rhoe)
+        #Ee = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhoe))
+        #Cnle = coh.coh_nl(2, 2, rhoe)
+        #Nle[j] = ent.chsh(rhoe)
+        #Se[j] = ent.steering(rhoe)
         # De[j] = discord.hellinger(2, 2, rhoe)
-        # De[j] = discord.oz_2qb(rhoe)
-        # F[j] = fidelity_mm(4, Werner(j*0.1), rhoe)
-    Nt = 100
+        #De[j] = discord.oz_2qb(rhoe)
+        #F[j] = fidelity_mm(4, Werner(j*0.1), rhoe)
+    Nt = 110
     Et = np.zeros(Nt)
     Nlt = np.zeros(Nt)
     St = np.zeros(Nt)
@@ -48,55 +75,63 @@ def werner():
     Std = np.zeros(Nt)
     Cnltd = np.zeros(Nt)
     Dtd = np.zeros(Nt)
-    p = 0.28
+    p = 0.2
     a = p
     dw = 1.01/Nt
     w = -dw
     for j in range(0, Nt):
         w = w + dw
-        if w > 1.0:
+        if w > 1.01:
             break
-        # rho = Werner(w)
-        # Et[j] = ent.concurrence(rho)
-        # Et[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rho))
-        # Cnlt[j] = coh.coh_nl(2, 2, rho)
-        # Nlt[j] = ent.chsh(rho)
-        # St[j] = ent.steering(rho)
+        rho = Werner(w)
+        Et[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rho))
+        Cnlt[j] = coh.coh_nl(2, 2, rho)
+        Nlt[j] = ent.chsh(rho)
+        St[j] = ent.steering(rho)
+        #Dt[j] = discord.oz_2qb(rho)
         # Dt[j] = discord.hellinger(2, 2, rho)
-        # Dt[j] = discord.oz_2qb(rho)
-        rhod = werner_pdad(w, p, a)
+        #rhod = werner_pdad(w, p, a)
         # Etd[j] = ent.concurrence(rhod)
-        Etd[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhod))
-        Cnltd[j] = coh.coh_nl(2, 2, rhod)
-        Nltd[j] = ent.chsh(rhod)
-        Std[j] = ent.steering(rhod)
+        #Etd[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhod))
+        #Cnltd[j] = coh.coh_nl(2, 2, rhod)
+        #Nltd[j] = ent.chsh(rhod)
+        #Std[j] = ent.steering(rhod)
         # Dtd[j] = discord.hellinger(2, 2, rhod)
-        # Dtd[j] = discord.oz_2qb(rhod)
+        #Dtd[j] = discord.oz_2qb(rhod)
         wt[j] = w
-    # plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
-    plt.plot(wt, Cnltd, 'H', label='$C_{d}$', color='gray', markersize=5)
-    plt.plot(we, Cnle, '*', label=r'$C_{e}$', color='gray', markersize=10)
-    # plt.plot(wt, Dt, '-', label='D', color='magenta')
-    plt.plot(wt, Dtd, 'X', label='$D_{d}$', color='magenta', markersize=5)
-    plt.plot(we, De, 'o', label=r'$D_{e}$', color='magenta', markersize=10)
-    # plt.plot(wt, Et, '-.', label='E', color='blue')
-    plt.plot(wt, Etd, '4', label='$E_{d}$', color='blue', markersize=5)
-    plt.plot(we, Ee, 's', label=r'$E_{e}$', color='blue', markersize=10)
-    # plt.plot(wt, St, ':', label='$S$', color='red')
-    plt.plot(wt, Std, '+', label='$S_{d}$', color='red', markersize=5)
-    plt.plot(we, Se, '^', label=r'$S_{e}$', color='red', markersize=10)
-    # plt.plot(wt, Nlt, '--', label='$N$', color='cyan')
-    plt.plot(wt, Nltd, '2', label='$N_{d}$', color='cyan', markersize=5)
-    plt.plot(we, Nle, 'h', label=r'$N_{e}$', color='cyan', markersize=10)
-    # plt.plot(we, F, 'X', label=r'$F$', color='black')
+    plt.errorbar(we, Fe, Ferr, marker='x', label=r'$F$', color='black', markersize=5)
+    #plt.plot(we, F, 'x', label=r'$F$', color='black')
+    plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
+    plt.errorbar(we, Cnle, Cnlerr, marker='*', label=r'$C_{e}$', color='gray', markersize=5)
+    #plt.plot(wt, Cnltd, 'H', label='$C_{d}$', color='gray', markersize=3)
+    #plt.plot(we, Cnle, '*', label=r'$C_{e}$', color='gray', markersize=8)
+    plt.plot(wt, Dt, '-', label='D', color='magenta')
+    plt.errorbar(we, De, Derr, marker='o', label=r'$D_{e}$', color='magenta', markersize=5)
+    #plt.plot(wt, Dtd, 'X', label='$D_{d}$', color='magenta', markersize=3)
+    #plt.plot(we, De, 'o', label=r'$D_{e}$', color='magenta', markersize=8)
+    plt.plot(wt, Et, '-.', label='E', color='blue')
+    plt.errorbar(we, Ee, Eerr, marker='s', label=r'$E_{e}$', color='blue', markersize=5)
+    #plt.plot(wt, Etd, '4', label='$E_{d}$', color='blue', markersize=3)
+    #plt.plot(we, Ee, 's', label=r'$E_{e}$', color='blue', markersize=8)
+    #plt.errorbar(we, Ee, errE, xerr=None)
+    plt.plot(wt, St, ':', label='$S$', color='red')
+    plt.errorbar(we, Se, Serr, marker='^', label=r'$S_{e}$', color='red', markersize=5)
+    #plt.plot(wt, Std, 'd', label='$S_{d}$', color='red', markersize=3)
+    #plt.plot(we, Se, '^', label=r'$S_{e}$', color='red', markersize=8)
+    plt.plot(wt, Nlt, '--', label='$N$', color='cyan')
+    plt.errorbar(we, Nle, Nlerr, marker='h', label=r'$N_{e}$', color='cyan', markersize=5)
+    #plt.plot(wt, Nltd, '+', label='$N_{d}$', color='cyan', markersize=3)
+    #plt.plot(we, Nle, 'h', label=r'$N_{e}$', color='cyan', markersize=8)
     plt.xlabel('w')
-    plt.legend(loc=2)
+    plt.legend(loc=6)
+    plt.xlim(-0.2,1.02)
+    plt.ylim(-0.02,1.02)
     import platform
     if platform.system() == 'Linux':
-        plt.savefig('/home/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr.eps',
+        plt.savefig('/home/jonas/Dropbox/Research/ibm/bds/calc/qcorr.eps',
                     format='eps', dpi=100)
     else:
-        plt.savefig('/Users/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr.eps',
+        plt.savefig('/Users/jonas/Dropbox/Research/ibm/bds/calc/qcorr.eps',
                     format='eps', dpi=100)
     plt.show()
 
@@ -152,81 +187,3 @@ def werner_decoh():
     plt.xlabel('w')
     plt.legend(loc=6)
     plt.show()
-
-
-'''
-    import platform
-    if platform.system() == 'Linux':
-        plt.savefig('/home/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr_decoh025.eps',
-                    format='eps', dpi=100)
-    else:
-        plt.savefig('/Users/jonasmaziero/Dropbox/Research/ibm/bds/calc/qcorr_decoh099.eps',
-                    format='eps', dpi=100)
-    plt.show()
-'''
-# --------------
-'''
-    def bdsCorr():
-        from math import acos, sqrt
-        c1 = -0.9
-        c2 = -0.8
-        c3 = -0.8
-        from states import rhoBD
-        rho = np.zeros((4, 4), dtype=complex)
-        rho = rhoBD(c1, c2, c3)
-        eig = lapak.zheevd(rho)
-        print('eigens:', eig[0][0], eig[0][1], eig[0][2], eig[0][3])
-        import discord
-        dp = 0.05
-        d = 20*(1-0)
-        di = np.zeros(d)
-        cc = np.zeros(d)
-        mi = np.zeros(d)
-    #    diE = np.zeros(d)
-    #    ccE = np.zeros(d)
-    #    miE = np.zeros(d)
-    #    rhopE = np.zeros((4, 4), dtype=complex)
-        pv = np.zeros(d)
-        rhop = np.zeros((4, 4), dtype=complex)
-    #    import kraus
-    #    import tomography as tomo
-        p = -dp
-        for j in range(0, d):
-            p = p + dp
-    #        rhop = kraus.rho_pd(p, rho) # ; print(rhop) # teste para ver rhop
-            c1p = c1*(1.0-p)**2
-            c2p = c2*(1.0-p)**2
-            c3p = c3
-            print("p = ", p, ", c1p=", c1p, ", c2p=", c2p, ", c3p=", c3p)
-            p00 = (1.0 + c1p - c2p + c3p)/4.0
-            p01 = (1.0 + c1p + c2p - c3p)/4.0
-            p10 = (1.0 - c1p + c2p + c3p)/4.0
-            p11 = (1.0 - c1p - c2p - c3p)/4.0
-            print("p00 = ", p00, ", p01=", p01, ", p10=", p10, ", p11=", p11)
-            theta = 2.0*acos(sqrt(p00 + p01))
-            alpha = 2.0*acos(sqrt(p00 + p10))
-            print("theta = ", theta, ", alpha", alpha)
-            print("")
-            rhop = rhoBD(c1p, c2p, c3p)
-            pv[j] = p
-            di[j] = discord.discord_oz_bds(rhop)
-            cc[j] = discord.ccorr_hv_bds(rhop)
-            mi[j] = discord.mi_bds(rhop)
-            sj = str(j)
-            path1 = '/home/jonasmaziero/Dropbox/Research/IBM_QC/'
-            path2 = 'tomography/BDS/bell_diagonal/'
-            path = path1 + path2 + sj + '/'
-            rhopE = tomo.tomo_2qb(path)
-            diE[j] = discord.discord_oz_bds(rhopE)
-            ccE[j] = discord.ccorr_hv_bds(rhopE)
-            miE[j] = discord.mi_bds(rhopE)
-            eigE = lapak.zheevd(rhopE)
-            print('eigensE:', eigE[0][0], eigE[0][1], eigE[0][2], eigE[0][3])
-            print('di =', di[j], '  diE = ', diE[j])
-        plt.plot(pv, di, label='di')
-        plt.plot(pv, cc, label='cc')
-        plt.plot(pv, mi, label='im')
-        plt.xlabel('p')
-        plt.legend()
-        plt.show()
-'''

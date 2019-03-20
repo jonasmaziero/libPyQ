@@ -3,7 +3,6 @@ def tomo_2qb(path):
     ns = 8192.0
     CM = zeros((4, 4))
     CM[0][0] = 1.0
-    # path = "/Users/jonasmaziero/Dropbox/Research/IBM_QC/scp_tel/experiment/tomography_BDS/c1_06/"
     fname = path + "XX.csv"
     pXX = genfromtxt(fname, delimiter=",", skip_header=1)
     CM[1][1] = ((pXX[0][1] + pXX[3][1]) - (pXX[1][1] + pXX[2][1]))/ns
@@ -37,7 +36,130 @@ def tomo_2qb(path):
     CM[3][3] = ((pZZ[0][1] + pZZ[3][1]) - (pZZ[1][1] + pZZ[2][1]))/ns
     CM[3][0] = ((pZZ[0][1] + pZZ[2][1]) - (pZZ[1][1] + pZZ[3][1]))/ns
     CM[0][3] = ((pZZ[0][1] + pZZ[1][1]) - (pZZ[2][1] + pZZ[3][1]))/ns
-    # print(CM.real)
+    from states import rho2qb
+    rho = rho2qb(CM)
+    return rho
+
+def tomo_2qb_(path):
+    import numpy as np
+    from numpy import genfromtxt
+    ns = 8192.0
+    CM = np.zeros((4, 4))
+    CM[0][0] = 1.0
+    fname = path + 'XX.dat'
+    arquivo = open(fname, 'r')
+    for line in arquivo:
+        cols =  line.split(' ')
+    a = cols[1]; b = cols[3]; c = cols[7]; d = cols[5]
+    a = a[:-1]; b = b[:-1]; c = c[:-1]; d = d[:-1]
+    pXX = np.zeros((4,2))
+    pXX[0][1] = int(a)
+    pXX[1][1] = int(b)
+    pXX[2][1] = int(c)
+    pXX[3][1] = int(d)
+    CM[1][1] = ((pXX[0][1] + pXX[3][1]) - (pXX[1][1] + pXX[2][1]))/ns
+    CM[1][0] = ((pXX[0][1] + pXX[2][1]) - (pXX[1][1] + pXX[3][1]))/ns
+    CM[0][1] = ((pXX[0][1] + pXX[1][1]) - (pXX[2][1] + pXX[3][1]))/ns
+    fname = path + 'XY.dat'
+    arquivo = open(fname, 'r')
+    for line in arquivo:
+        cols =  line.split(' ')
+    a = cols[1]; b = cols[3]; c = cols[7]; d = cols[5]
+    a = a[:-1]; b = b[:-1]; c = c[:-1]; d = d[:-1]
+    pXY = np.zeros((4,2))
+    pXY[0][1] = int(a)
+    pXY[1][1] = int(b)
+    pXY[2][1] = int(c)
+    pXY[3][1] = int(d)
+    CM[1][2] = ((pXY[0][1] + pXY[3][1]) - (pXY[1][1] + pXY[2][1]))/ns
+    fname = path + 'XZ.dat'
+    arquivo = open(fname, 'r')
+    for line in arquivo:
+        cols =  line.split(' ')
+    a = cols[1]; b = cols[3]; c = cols[7]; d = cols[5]
+    a = a[:-1]; b = b[:-1]; c = c[:-1]; d = d[:-1]
+    pXZ = np.zeros((4,2))
+    pXZ[0][1] = int(a)
+    pXZ[1][1] = int(b)
+    pXZ[2][1] = int(c)
+    pXZ[3][1] = int(d)
+    CM[1][3] = ((pXZ[0][1] + pXZ[3][1]) - (pXZ[1][1] + pXZ[2][1]))/ns
+    fname = path + 'YX.dat'
+    arquivo = open(fname, 'r')
+    for line in arquivo:
+        cols =  line.split(' ')
+    a = cols[1]; b = cols[3]; c = cols[7]; d = cols[5]
+    a = a[:-1]; b = b[:-1]; c = c[:-1]; d = d[:-1]
+    pYX = np.zeros((4,2))
+    pYX[0][1] = int(a)
+    pYX[1][1] = int(b)
+    pYX[2][1] = int(c)
+    pYX[3][1] = int(d)
+    CM[2][1] = ((pYX[0][1] + pYX[3][1]) - (pYX[1][1] + pYX[2][1]))/ns
+    fname = path + 'YY.dat'
+    arquivo = open(fname, 'r')
+    for line in arquivo:
+        cols =  line.split(' ')
+    a = cols[1]; b = cols[3]; c = cols[7]; d = cols[5]
+    a = a[:-1]; b = b[:-1]; c = c[:-1]; d = d[:-1]
+    pYY = np.zeros((4,2))
+    pYY[0][1] = int(a)
+    pYY[1][1] = int(b)
+    pYY[2][1] = int(c)
+    pYY[3][1] = int(d)
+    CM[2][2] = ((pYY[0][1] + pYY[3][1]) - (pYY[1][1] + pYY[2][1]))/ns
+    CM[2][0] = ((pYY[0][1] + pYY[2][1]) - (pYY[1][1] + pYY[3][1]))/ns
+    CM[0][2] = ((pYY[0][1] + pYY[1][1]) - (pYY[2][1] + pYY[3][1]))/ns
+    fname = path + 'YZ.dat'
+    arquivo = open(fname, 'r')
+    for line in arquivo:
+        cols =  line.split(' ')
+    a = cols[1]; b = cols[3]; c = cols[7]; d = cols[5]
+    a = a[:-1]; b = b[:-1]; c = c[:-1]; d = d[:-1]
+    pYZ = np.zeros((4,2))
+    pYZ[0][1] = int(a)
+    pYZ[1][1] = int(b)
+    pYZ[2][1] = int(c)
+    pYZ[3][1] = int(d)
+    CM[2][3] = ((pYZ[0][1] + pYZ[3][1]) - (pYZ[1][1] + pYZ[2][1]))/ns
+    fname = path + 'ZX.dat'
+    arquivo = open(fname, 'r')
+    for line in arquivo:
+        cols =  line.split(' ')
+    a = cols[1]; b = cols[3]; c = cols[7]; d = cols[5]
+    a = a[:-1]; b = b[:-1]; c = c[:-1]; d = d[:-1]
+    pZX = np.zeros((4,2))
+    pZX[0][1] = int(a)
+    pZX[1][1] = int(b)
+    pZX[2][1] = int(c)
+    pZX[3][1] = int(d)
+    CM[3][1] = ((pZX[0][1] + pZX[3][1]) - (pZX[1][1] + pZX[2][1]))/ns
+    fname = path + 'ZY.dat'
+    arquivo = open(fname, 'r')
+    for line in arquivo:
+        cols =  line.split(' ')
+    a = cols[1]; b = cols[3]; c = cols[7]; d = cols[5]
+    a = a[:-1]; b = b[:-1]; c = c[:-1]; d = d[:-1]
+    pZY = np.zeros((4,2))
+    pZY[0][1] = int(a)
+    pZY[1][1] = int(b)
+    pZY[2][1] = int(c)
+    pZY[3][1] = int(d)
+    CM[3][2] = ((pZY[0][1] + pZY[3][1]) - (pZY[1][1] + pZY[2][1]))/ns
+    fname = path + 'ZZ.dat'
+    arquivo = open(fname, 'r')
+    for line in arquivo:
+        cols =  line.split(' ')
+    a = cols[1]; b = cols[3]; c = cols[7]; d = cols[5]
+    a = a[:-1]; b = b[:-1]; c = c[:-1]; d = d[:-1]
+    pZZ = np.zeros((4,2))
+    pZZ[0][1] = int(a)
+    pZZ[1][1] = int(b)
+    pZZ[2][1] = int(c)
+    pZZ[3][1] = int(d)
+    CM[3][3] = ((pZZ[0][1] + pZZ[3][1]) - (pZZ[1][1] + pZZ[2][1]))/ns
+    CM[3][0] = ((pZZ[0][1] + pZZ[2][1]) - (pZZ[1][1] + pZZ[3][1]))/ns
+    CM[0][3] = ((pZZ[0][1] + pZZ[1][1]) - (pZZ[2][1] + pZZ[3][1]))/ns
     from states import rho2qb
     rho = rho2qb(CM)
     return rho
@@ -125,72 +247,3 @@ def plot_rho1qb(rho):
     colors = cm.rainbow(values)
     ax1.bar3d(xposM.ravel(), yposM.ravel(), dz*0, dx, dy, dz, color=colors)
     plt.show()
-
-
-def tomographer_1qb():
-    import logging
-    # logging.basicConfig(level=logging.DEBUG) # uncomment for debug messages
-
-    # import Tomographer & utilities
-    import tomographer
-    import tomographer.tomorun
-    import tomographer.jpyutil
-    import tomographer.querrorbars
-
-    r = None
-    with tomographer.jpyutil.RandWalkProgressBar() as prg:
-        r = tomographer.tomorun.tomorun(
-            dim=2,
-            # POVM effects and frequencies -- Pauli measurements on a qubit, 500x/axis
-            Emn=[np.array([[.5, .5],
-                           [.5, .5]]),  # +X
-                 np.array([[.5, -.5],
-                           [-.5, .5]]),  # -X
-                 np.array([[.5, -.5j],
-                           [.5j, .5]]),  # +Y
-                 np.array([[.5, .5j],
-                           [-.5j, .5]]),  # -Y
-                 np.array([[1, 0],
-                           [0, 0]]),  # +Z
-                 np.array([[0, 0],
-                           [0, 1]])],  # -Z
-            Nm=np.array([262, 238,  231, 269,  483, 17]),  # plug in real data here
-            # figure of merit: fidelity-squared to pure |0> state
-            fig_of_merit="obs-value",
-            observable=np.array([[1, 0], [0, 0]]),
-            # histogram parameters
-            hist_params=tomographer.HistogramParams(min=0.9, max=1.0, num_bins=40),
-            # settings of the random walk
-            mhrw_params=tomographer.MHRWParams(
-                step_size=0.035,  # adjust such that accept. ratio ~ 0.25
-                n_sweep=30,  # set such that step_size*n_sweep ~ 1
-                n_therm=500,
-                n_run=32768),
-            # our progress callback
-            progress_fn=prg.progress_fn
-        )
-        # Check the final report of runs to make sure error bars have (mostly all) converged,
-        # and to verify the acceptance ratio is more or less in the range [0.2, 0.4]
-        prg.displayFinalInfo(r['final_report_runs'])
-
-    # The final histogram, as a `tomographer.AveragedErrorBarHistogram` instance:
-    final_histogram = r['final_histogram']
-
-    # For a quick visual text-based representation of the histogram, use prettyPrint():
-    #
-    # print("Finished. Here is the final histogram:")
-    # print(final_histogram.prettyPrint())
-
-    # Do the analysis and determine the quantum error bars
-    analysis = tomographer.querrorbars.HistogramAnalysis(
-        final_histogram,
-        ftox=(1, -1),  # x=1-f for fidelity
-    )
-    analysis.printFitParameters()
-    q = analysis.printQuantumErrorBars()  # q has attributes: q.f0, q.Delta, q.gamma
-    # show linear scale plot
-    analysis.plot()
-    # log scale plot (adjust scale before showing plot)
-    p = analysis.plot(log_scale=True, show_plot=False)
-    p.ax.set_ylim([1e-5, 1e2])
-    p.show()
