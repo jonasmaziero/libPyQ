@@ -14,7 +14,7 @@ from math import sqrt
 
 def werner():
     Nw = 11 # no. of experiments of each configuration
-    Nr = 5 # no. of rounds of the experiment
+    Nr = 7 # no. of rounds of the experiment
     we = np.array([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
     Ee = np.zeros(Nw)
     Eerr = np.zeros(Nw)  # for the standard deviation
@@ -49,6 +49,7 @@ def werner():
             Nl = ent.chsh(rhoe);  Nlm += Nl;  Nl2m += pow(Nl,2)
             S = ent.steering(rhoe);  Sm += S;  S2m += pow(S,2)
             #D = discord.oz_2qb(rhoe);  Dm += D;  D2m += pow(D,2)
+            #D = discord.hellinger(2, 2, rhoe);  Dm += D;  D2m += pow(D,2)
         Em = Em/Nr;  E2m = E2m/Nr;  Eerr[j] = sqrt(E2m - pow(Em,2));  Ee[j] = Em
         Fm = Fm/Nr;  F2m = F2m/Nr;  Ferr[j] = sqrt(F2m - pow(Fm,2));  Fe[j] = Fm
         Cnlm = Cnlm/Nr;  Cnl2m = Cnl2m/Nr;  Cnlerr[j] = sqrt(Cnl2m - pow(Cnlm,2));  Cnle[j] = Cnlm
@@ -75,7 +76,7 @@ def werner():
     Std = np.zeros(Nt)
     Cnltd = np.zeros(Nt)
     Dtd = np.zeros(Nt)
-    p = 0.2
+    p = 0.15
     a = p
     dw = 1.01/Nt
     w = -dw
@@ -83,107 +84,54 @@ def werner():
         w = w + dw
         if w > 1.01:
             break
-        rho = Werner(w)
-        Et[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rho))
-        Cnlt[j] = coh.coh_nl(2, 2, rho)
-        Nlt[j] = ent.chsh(rho)
-        St[j] = ent.steering(rho)
+        #rho = Werner(w)
+        #Et[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rho))
+        #Cnlt[j] = coh.coh_nl(2, 2, rho)
+        #Nlt[j] = ent.chsh(rho)
+        #St[j] = ent.steering(rho)
         #Dt[j] = discord.oz_2qb(rho)
-        # Dt[j] = discord.hellinger(2, 2, rho)
-        #rhod = werner_pdad(w, p, a)
-        # Etd[j] = ent.concurrence(rhod)
-        #Etd[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhod))
-        #Cnltd[j] = coh.coh_nl(2, 2, rhod)
-        #Nltd[j] = ent.chsh(rhod)
-        #Std[j] = ent.steering(rhod)
-        # Dtd[j] = discord.hellinger(2, 2, rhod)
-        #Dtd[j] = discord.oz_2qb(rhod)
-        wt[j] = w
-    plt.errorbar(we, Fe, Ferr, marker='x', label=r'$F$', color='black', markersize=5)
-    #plt.plot(we, F, 'x', label=r'$F$', color='black')
-    plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
-    plt.errorbar(we, Cnle, Cnlerr, marker='*', label=r'$C_{e}$', color='gray', markersize=5)
-    #plt.plot(wt, Cnltd, 'H', label='$C_{d}$', color='gray', markersize=3)
-    #plt.plot(we, Cnle, '*', label=r'$C_{e}$', color='gray', markersize=8)
-    plt.plot(wt, Dt, '-', label='D', color='magenta')
-    plt.errorbar(we, De, Derr, marker='o', label=r'$D_{e}$', color='magenta', markersize=5)
-    #plt.plot(wt, Dtd, 'X', label='$D_{d}$', color='magenta', markersize=3)
-    #plt.plot(we, De, 'o', label=r'$D_{e}$', color='magenta', markersize=8)
-    plt.plot(wt, Et, '-.', label='E', color='blue')
-    plt.errorbar(we, Ee, Eerr, marker='s', label=r'$E_{e}$', color='blue', markersize=5)
-    #plt.plot(wt, Etd, '4', label='$E_{d}$', color='blue', markersize=3)
-    #plt.plot(we, Ee, 's', label=r'$E_{e}$', color='blue', markersize=8)
-    #plt.errorbar(we, Ee, errE, xerr=None)
-    plt.plot(wt, St, ':', label='$S$', color='red')
-    plt.errorbar(we, Se, Serr, marker='^', label=r'$S_{e}$', color='red', markersize=5)
-    #plt.plot(wt, Std, 'd', label='$S_{d}$', color='red', markersize=3)
-    #plt.plot(we, Se, '^', label=r'$S_{e}$', color='red', markersize=8)
-    plt.plot(wt, Nlt, '--', label='$N$', color='cyan')
-    plt.errorbar(we, Nle, Nlerr, marker='h', label=r'$N_{e}$', color='cyan', markersize=5)
-    #plt.plot(wt, Nltd, '+', label='$N_{d}$', color='cyan', markersize=3)
-    #plt.plot(we, Nle, 'h', label=r'$N_{e}$', color='cyan', markersize=8)
-    plt.xlabel('w')
-    plt.legend(loc=6)
-    plt.xlim(-0.2,1.02)
-    plt.ylim(-0.02,1.02)
-    import platform
-    if platform.system() == 'Linux':
-        plt.savefig('/home/jonas/Dropbox/Research/ibm/bds/calc/qcorr.eps',
-                    format='eps', dpi=100)
-    else:
-        plt.savefig('/Users/jonas/Dropbox/Research/ibm/bds/calc/qcorr.eps',
-                    format='eps', dpi=100)
-    plt.show()
-
-
-def werner_decoh():
-    Nt = 100
-    wt = np.zeros(Nt)
-    Et = np.zeros(Nt)
-    Nlt = np.zeros(Nt)
-    St = np.zeros(Nt)
-    Cnlt = np.zeros(Nt)
-    Dt = np.zeros(Nt)
-    Etd = np.zeros(Nt)
-    Nltd = np.zeros(Nt)
-    Std = np.zeros(Nt)
-    Cnltd = np.zeros(Nt)
-    Dtd = np.zeros(Nt)
-    p = 0.3
-    a = p
-    dw = 1.01/Nt
-    w = -dw
-    for j in range(0, Nt):
-        w = w + dw
-        if w > 1.0:
-            break
-        rho = Werner(w)
-        # Et[j] = ent.concurrence(rho)
-        Et[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rho))
-        Cnlt[j] = coh.coh_nl(2, 2, rho)
-        Nlt[j] = ent.chsh(rho)
-        St[j] = ent.steering(rho)
-        # Dt[j] = discord.hellinger(2, 2, rho)
-        Dt[j] = discord.oz_2qb(rho)
-        wt[j] = w
+        #Dt[j] = discord.hellinger(2, 2, rho)
         rhod = werner_pdad(w, p, a)
-        # Etd[j] = ent.concurrence(rhod)
+        Etd[j] = ent.concurrence(rhod)
         Etd[j] = 2*ent.negativity(4, pT.pTransposeL(2, 2, rhod))
         Cnltd[j] = coh.coh_nl(2, 2, rhod)
         Nltd[j] = ent.chsh(rhod)
         Std[j] = ent.steering(rhod)
-        # Dtd[j] = discord.hellinger(2, 2, rhod)
         Dtd[j] = discord.oz_2qb(rhod)
-    plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
-    plt.plot(wt, Cnltd, '*', markersize=4, label=r'$C_{d}$', color='gray')
-    plt.plot(wt, Dt, '-', label='D', color='magenta')
-    plt.plot(wt, Dtd, 'o', markersize=4, label=r'$D_{d}$', color='magenta')
-    plt.plot(wt, Et, '-.', label='E', color='blue')
-    plt.plot(wt, Etd, 's', markersize=4, label=r'$E_{d}$', color='blue')
-    plt.plot(wt, St, ':', label='$S$', color='red')
-    plt.plot(wt, Std, '^', markersize=4, label=r'$S_{d}$', color='red')
-    plt.plot(wt, Nlt, '--', label='$N$', color='cyan')
-    plt.plot(wt, Nltd, 'h', markersize=4, label=r'$N_{d}$', color='cyan')
+        # Dtd[j] = discord.hellinger(2, 2, rhod)
+        wt[j] = w
+    #plt.errorbar(we, Fe, Ferr, marker='x', label=r'$F$', color='black', markersize=5)
+    #plt.plot(we, F, 'x', label=r'$F$', color='black')
+    #plt.plot(wt, Cnlt, '.', label='$C$', color='gray')
+    #plt.errorbar(we, Cnle, Cnlerr, marker='*', label=r'$C_{e}$', color='gray', markersize=5)
+    plt.plot(wt, Cnltd, 'H', label='$C_{d}$', color='gray', markersize=3)
+    #plt.plot(we, Cnle, '*', label=r'$C_{e}$', color='gray', markersize=8)
+    #plt.plot(wt, Dt, '-', label='D', color='magenta')
+    #plt.errorbar(we, De, Derr, marker='o', label=r'$D_{e}$', color='magenta', markersize=5)
+    plt.plot(wt, Dtd, 'x', label='$D_{d}$', color='magenta', markersize=3)
+    #plt.plot(we, De, 'o', label=r'$D_{e}$', color='magenta', markersize=8)
+    #plt.plot(wt, Et, '-.', label='E', color='blue')
+    #plt.errorbar(we, Ee, Eerr, marker='s', label=r'$E_{e}$', color='blue', markersize=5)
+    plt.plot(wt, Etd, '4', label='$E_{d}$', color='blue', markersize=3)
+    #plt.plot(we, Ee, 's', label=r'$E_{e}$', color='blue', markersize=8)
+    #plt.errorbar(we, Ee, errE, xerr=None)
+    #plt.plot(wt, St, ':', label='$S$', color='red')
+    #plt.errorbar(we, Se, Serr, marker='^', label=r'$S_{e}$', color='red', markersize=5)
+    plt.plot(wt, Std, 'd', label='$S_{d}$', color='red', markersize=3)
+    #plt.plot(we, Se, '^', label=r'$S_{e}$', color='red', markersize=8)
+    #plt.plot(wt, Nlt, '--', label='$N$', color='cyan')
+    #plt.errorbar(we, Nle, Nlerr, marker='h', label=r'$N_{e}$', color='cyan', markersize=5)
+    plt.plot(wt, Nltd, '+', label='$N_{d}$', color='cyan', markersize=3)
+    #plt.plot(we, Nle, 'h', label=r'$N_{e}$', color='cyan', markersize=8)
     plt.xlabel('w')
-    plt.legend(loc=6)
+    plt.legend(loc=(0.02,0.5))
+    plt.xlim(-0.01,1.02)
+    plt.ylim(-0.03,1.02)
+    import platform
+    if platform.system() == 'Linux':
+        plt.savefig('/home/jonas/Dropbox/Research/ibm/bds/calc/qcorrp015.eps',
+                    format='eps', dpi=100)
+    else:
+        plt.savefig('/Users/jonas/Dropbox/Research/ibm/bds/calc/qcorrp015.eps',
+                    format='eps', dpi=100)
     plt.show()

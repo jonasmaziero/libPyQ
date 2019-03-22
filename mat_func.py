@@ -9,7 +9,7 @@ def mat_sqrt(d, A):
     psi = np.zeros((d, 1), dtype=complex)
     for j in range(0, d):
         psi = v[:, j]
-        Asr += sqrt(w[j])*proj(d, psi)
+        Asr += sqrt(abs(w[j]))*proj(d, psi)
     return Asr
 
 
