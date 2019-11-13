@@ -1,36 +1,109 @@
 import numpy as np
+import math
+import matplotlib.pyplot as plt
+import coherence
+import rpvg
+from rpvg import rpv_zhsl
+from rug import ru_gram_schmidt
+from distances import normHS
 
-'''
 def test():
     np.random.seed()
-    import coherence as coh
-    import matplotlib.pyplot as plt
     ns = 10**3  # number of samples for the average
     nqb = 5  # maximum number of qubits regarded
-    Cavg = np.zeros(nqb)
+    Cavg1 = np.zeros(nqb)
+    Cavg2 = np.zeros(nqb)
     d = np.zeros(nqb, dtype=int)
     for j in range(0, nqb):
         d[j] = 2**(j+1)
-        rdm = np.zeros((d[j], d[j]), dtype=complex)
-        Cavg[j] = 0.0
+        rs1 = np.zeros((d[j], d[j]), dtype=complex)
+        rs2 = np.zeros((d[j], d[j]), dtype=complex)
+        Cavg1[j] = 0.0; Cavg2[j] = 0.0
         for k in range(0, ns):
-            # rdm = rdm_ginibre(d[j])
-            rdm = rdm_std(d[j])
-            Cavg[j] += coh.coh_re(d[j], rdm)
-            # Cavg[j] += coh.coh_l1(d[j], rdm)
-        Cavg[j] = Cavg[j]/ns
-        print(Cavg[j])
-    plt.plot(d, Cavg, label='')
+            rs1 = rdm(d[j],'gin')
+            rs2 = rdm(d[j],'pos_')
+            Cavg1[j] += coherence.coh(rs1,'l1')
+            Cavg2[j] += coherence.coh(rs2,'l1')
+        Cavg1[j] /= ns;  Cavg2[j] /= ns
+        print(Cavg1[j], Cavg2[j])
+    plt.plot(d, Cavg1, label='gin')
+    plt.plot(d, Cavg2, label='pos_')
     plt.xlabel('d')
     plt.ylabel('C')
     plt.legend()
     plt.show()
+
+def rdm(d,method):
+    if method == 'std':
+        return rdm_std(d)
+    elif method == 'gin':
+        return rdm_ginibre(d)
+    elif method == 'pos':
+        return rdm_pos(d)
+    elif method == 'pos_':
+        return rdm_pos_(d)
+
+def rdm_pos_(d): # did not work
+    rpv = np.zeros(d)
+    rpv = rpvg.rpv_zhsl(d)
+    rrho = np.zeros((d,d), dtype = complex)
+    for j in range(0,d):
+        rrho[j][j] = rpv[j]
+    for j in range(0,d-1):
+        for k in range(j+1,d):
+            x, y = rand_circle(math.sqrt(abs(rrho[j][j]*rrho[k][k])))
+            rrho[j][k] = x + 1j*y
+            rrho[k][j] = x - 1j*y
+    return rrho
+
+def rdm_pos(d):
+    rpv = np.zeros(d)
+    rpv = rpvg.rpv_zhsl(d)
+    rrho = np.zeros((d,d), dtype = complex)
+    for j in range(0,d):
+        rrho[j][j] = rpv[j]
+    r = 0.0
+    for j in range(0,d-1):
+        for k in range(j+1,d):
+            r += rpv[j]*rpv[k]
+    r = math.sqrt(r)
+    for j in range(0,d-1):
+        for k in range(j+1,d):
+            x, y = rand_circle(r)
+            rrho[j][k] = x + 1j*y
+            rrho[k][j] = x - 1j*y
+            r -= (math.pow(x,2)+math.pow(y,2))
+    return rrho
+
+'''
+def test_rcircle():
+    n = 10000
+    r = 1
+    #th = np.zeros(n)
+    #rh = np.zeros(n)
+    #th = 2*math.pi*np.random.random(n)
+    #rh = r*np.sqrt(np.random.random(n))
+    #x = rh*np.cos(th)
+    #y = rh*np.sin(th)
+    x = np.zeros(n)
+    y = np.zeros(n)
+    for j in range(0,n):
+        x[j], y[j] = rand_circle(r)
+    plt.scatter(x, y, label='scatter', color='blue', s=5, marker='*')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.legend()
+    plt.show()
+    return
 '''
 
+def rand_circle(r):
+    th = 2*math.pi*np.random.random()
+    rh = r*math.sqrt(np.random.random())
+    x = rh*math.cos(th);  y = rh*math.sin(th)
+    return x, y
 
 def rdm_std(d):
-    from rpvg import rpv_zhsl
-    from rug import ru_gram_schmidt
     rdm = np.zeros((d, d), dtype=complex)
     rpv = rpv_zhsl(d)
     ru = ru_gram_schmidt(d)
@@ -45,9 +118,7 @@ def rdm_std(d):
                     rdm[k][j] = rdm[j][k].real - (1j)*rdm[j][k].imag
     return rdm
 
-
 def rdm_ginibre(d):
-    from distances import normHS
     rdm = np.zeros((d, d), dtype=complex)
     G = ginibre(d)
     N2 = (normHS(d, G))**2.0
@@ -62,7 +133,6 @@ def rdm_ginibre(d):
             if j != k:
                 rdm[k][j] = rdm[j][k].real - (1j)*rdm[j][k].imag
     return rdm
-
 
 def ginibre(d):
     G = np.zeros((d, d), dtype=complex)

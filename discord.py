@@ -1,13 +1,41 @@
 import numpy as np
-from math import sin, cos
+import math
 from entropy import mutual_info
 from constants import pi
 from numpy import linalg as LA
-from math import sqrt
 import gell_mann as gm
 from mat_func import mat_sqrt, transpose, outerr
 from distances import normr
 from pTrace import trace, pTraceL, pTraceR
+
+
+def tdd_xs(rho): # trace distance discord for x states [arXiv:1304.6879]
+    xA3 = 2*(rho[0][0]+rho[1][1])-1; xA32 = xA3**2
+    g1 = 2*(rho[2][1]+rho[3][0]);  g12 = g1**2
+    g2 = 2*(rho[2][1]-rho[3][0]);  g22 = g2**2
+    g3 = 1-2*(rho[1][1]+rho[2][2]);  g32 = g3**2
+    '''num = g12*max(g32,g22+xA32) - g22*min(g32,g12)
+    den = max(g32,(g22+xA32))-min(g32,g12)+g12-g22
+    return math.sqrt(num/den)/2.0'''
+    if g12-g32+xA32 < 0:
+        disc = abs(g1)
+    else:
+        if abs(g3) >= abs(g1):
+            disc = abs(g1)
+        else:
+            disc = heaviside(g12-g32+xA32)
+            disc *= math.sqrt((g12*(g22+xA32)-g22*g32)/(g12-g32+xA32))
+            disc += heaviside(-(g12-g32+xA32))*(abs(g3))
+    return disc
+
+
+def heaviside(x):
+    if x < 0:
+        return 0
+    elif x == 0:
+        return 1/2
+    elif x > 0:
+        return 1
 
 
 def hellinger(da, db, rho):  # arXiv:1510.06995
@@ -100,3 +128,18 @@ def mi_bds(rho):
     mi = float(l00*log(4.0*l00, 2) + l01*log(4.0*l01, 2) +
                l10*log(4.0*l10, 2) + l11*log(4.0*l11, 2))
     return mi
+
+def test():
+    N = 21
+    y = np.zeros(N)
+    x = np.zeros(N)
+    from states import Werner
+    for j in range(0, N):
+        x[j] = j*0.05
+        rho = Werner(x[j])
+        y[j] = tdd_xs(rho)
+    import matplotlib.pyplot as plt
+    plt.plot(x, y, label='tdd')
+    plt.xlabel('w')
+    plt.ylabel('')
+    plt.show()

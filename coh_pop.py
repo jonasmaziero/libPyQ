@@ -5,6 +5,8 @@ import gell_mann as gm
 from math import log
 from mat_func import mat_sqrt
 from pTrace import trace
+import platform
+import entropy
 
 
 def coh_pop():
@@ -47,7 +49,6 @@ def coh_pop():
     plt.xlabel(r'$\Omega$')
     plt.ylabel(r'$C_{he}$')
     plt.legend()
-    import platform
     if platform.system() == 'Linux':
         path1 = '/home/jonasmaziero/Dropbox/Research/qnesses/coherence/'
         path = path1 + 'coeh_pop_tradeoff/calc/hevnd4.eps'
@@ -85,8 +86,7 @@ def Svn(d, bv):
     pd = np.zeros(d)
     for j in range(0, d):
         pd[j] = dm[j, j].real
-    import entropy
-    return entropy.shannon(d, pd)
+    return entropy.shannon(pd)
 
 
 def coh_he(d, bvsr):
@@ -115,6 +115,5 @@ def SvnHe(d, bvsr, trsr):
     pd = np.zeros(d)
     for j in range(0, d):
         pd[j] = dm[j, j].real
-    import entropy
     svn = entropy.shannon(d, pd) + trsr*(trsr-1)
     return svn
