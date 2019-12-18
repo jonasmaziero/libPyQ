@@ -55,12 +55,12 @@ def bloch_vector(d, A):
 
 
 def corr_mat_dd(da, db, M):
-    cmdd = np.zeros((da-1, db-1))
+    cmdd = np.zeros((da-1, db-1), dtype=complex)
     for j in range(1, da):
         for k in range(1, db):
             for m in range(1, j+1):
                 for n in range(1, k+1):
-                    cmdd[j-1, k-1] += M[(m-1)*db+(n-1), (m-1)*db+(n-1)]
+                    cmdd[j-1, k-1] += M[(m-1)*db+(n-1),(m-1)*db+(n-1)]
             m = j+1
             for n in range(1, k+1):
                 cmdd[j-1, k-1] -= j*M[(m-1)*db+(n-1), (m-1)*db+(n-1)]
@@ -71,11 +71,11 @@ def corr_mat_dd(da, db, M):
             n = k+1
             cmdd[j-1, k-1] += j*k*M[(m-1)*db+(n-1), (m-1)*db+(n-1)]
             cmdd[j-1, k-1] *= 2/np.sqrt(j*(j+1)*k*(k+1))
-    return cmdd
+    return cmdd.real
 
 
 def corr_mat_ds(da, db, M):
-    cmds = np.zeros((da-1, db*(db-1)//2))
+    cmds = np.zeros((da-1, db*(db-1)//2), dtype=complex)
     for j in range(1, da):
         n = 0
         for k in range(1, db):
@@ -88,11 +88,11 @@ def corr_mat_ds(da, db, M):
                 cmds[j-1, n-1] -= j*(M[(m-1)*db+(l-1), (m-1)*db+(k-1)] +
                                      M[(m-1)*db+(k-1), (m-1)*db+(l-1)])
                 cmds[j-1, n-1] *= np.sqrt(2/(j*(j+1)))
-    return cmds
+    return cmds.real
 
 
 def corr_mat_da(da, db, M):
-    cmda = np.zeros((da-1, db*(db-1)//2))
+    cmda = np.zeros((da-1, db*(db-1)//2), dtype=complex)
     for j in range(1, da):
         n = 0
         for k in range(1, db):
@@ -105,11 +105,11 @@ def corr_mat_da(da, db, M):
                 cmda[j-1, n-1] -= j*(M[(m-1)*db+(l-1), (m-1)*db+(k-1)] -
                                      M[(m-1)*db+(k-1), (m-1)*db+(l-1)])
                 cmda[j-1, n-1] *= -1j*np.sqrt(2/(j*(j+1)))
-    return cmda
+    return cmda.real
 
 
 def corr_mat_sd(da, db, M):
-    cmsd = np.zeros((da*(da-1)//2, db-1))
+    cmsd = np.zeros((da*(da-1)//2, db-1), dtype=complex)
     n = 0
     for k in range(1, da):
         for l in range(k+1, da+1):
@@ -122,11 +122,11 @@ def corr_mat_sd(da, db, M):
                 cmsd[n-1, j-1] -= j*(M[(l-1)*db+(m-1), (k-1)*db+(m-1)] +
                                      M[(k-1)*db+(m-1), (l-1)*db+(m-1)])
                 cmsd[n-1, j-1] *= np.sqrt(2/(j*(j+1)))
-    return cmsd
+    return cmsd.real
 
 
 def corr_mat_ad(da, db, M):
-    cmad = np.zeros((da*(da-1)//2, db-1))
+    cmad = np.zeros((da*(da-1)//2, db-1), dtype=complex)
     n = 0
     for k in range(1, da):
         for l in range(k+1, da+1):
@@ -139,11 +139,11 @@ def corr_mat_ad(da, db, M):
                 cmad[n-1, j-1] -= j*(M[(l-1)*db+m-1, (k-1)*db+m-1]
                                      - M[(k-1)*db+m-1, (l-1)*db+m-1])
                 cmad[n-1, j-1] *= -1j*np.sqrt(2/(j*(j+1)))
-    return cmad
+    return cmad.real
 
 
 def corr_mat_ss(da, db, M):
-    cmss = np.zeros((da*(da-1)//2, db*(db-1)//2))
+    cmss = np.zeros((da*(da-1)//2, db*(db-1)//2), dtype=complex)
     p = 0
     for k in range(1, da):
         for l in range(k+1, da+1):
@@ -156,11 +156,11 @@ def corr_mat_ss(da, db, M):
                                        M[(k-1)*db+m-1, (l-1)*db+n-1])
                     cmss[p-1, q-1] += (M[(l-1)*db+m-1, (k-1)*db+n-1] +
                                        M[(k-1)*db+n-1, (l-1)*db+m-1])
-    return cmss
+    return cmss.real
 
 
 def corr_mat_sa(da, db, M):
-    cmsa = np.zeros((da*(da-1)//2, db*(db-1)//2))
+    cmsa = np.zeros((da*(da-1)//2, db*(db-1)//2), dtype=complex)
     p = 0
     for k in range(1, da):
         for l in range(k+1, da+1):
@@ -173,11 +173,11 @@ def corr_mat_sa(da, db, M):
                                           M[(k-1)*db+m-1, (l-1)*db+n-1])
                     cmsa[p-1, q-1] -= 1j*(M[(k-1)*db+n-1, (l-1)*db+m-1] -
                                           M[(l-1)*db+m-1, (k-1)*db+n-1])
-    return cmsa
+    return cmsa.real
 
 
 def corr_mat_as(da, db, M):
-    cmas = np.zeros((da*(da-1)//2, db*(db-1)//2))
+    cmas = np.zeros((da*(da-1)//2, db*(db-1)//2), dtype=complex)
     p = 0
     for k in range(1, da):
         for l in range(k+1, da+1):
@@ -190,11 +190,11 @@ def corr_mat_as(da, db, M):
                                           M[(k-1)*db+m-1, (l-1)*db+n-1])
                     cmas[p-1, q-1] -= 1j*(M[(l-1)*db+m-1, (k-1)*db+n-1] -
                                           M[(k-1)*db+n-1, (l-1)*db+m-1])
-    return cmas
+    return cmas.real
 
 
 def corr_mat_aa(da, db, M):
-    cmaa = np.zeros((da*(da-1)//2, db*(db-1)//2))
+    cmaa = np.zeros((da*(da-1)//2, db*(db-1)//2), dtype=complex)
     p = 0
     for k in range(1, da):
         for l in range(k+1, da+1):
@@ -207,7 +207,7 @@ def corr_mat_aa(da, db, M):
                                        M[(k-1)*db+n-1, (l-1)*db+m-1])
                     cmaa[p-1, q-1] -= (M[(l-1)*db+n-1, (k-1)*db+m-1] +
                                        M[(k-1)*db+m-1, (l-1)*db+n-1])
-    return cmaa
+    return cmaa.real
 
 
 def corr_mat(da, db, M):

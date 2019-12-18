@@ -43,7 +43,7 @@ def rdm(d,method):
     elif method == 'pos_':
         return rdm_pos_(d)
 
-def rdm_pos_(d): # did not work
+def rdm_pos_(d):
     rpv = np.zeros(d)
     rpv = rpvg.rpv_zhsl(d)
     rrho = np.zeros((d,d), dtype = complex)

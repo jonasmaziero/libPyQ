@@ -10,6 +10,14 @@ from states import Werner
 from decoherence import werner_pdad
 import tomography as tomo
 from math import sqrt
+import rpvg
+import states as st
+import gates
+import math
+import mat_func as mf
+import pTrace as ptr
+import gell_mann as gm
+import rpvg
 
 
 def werner():
@@ -135,3 +143,50 @@ def werner():
         plt.savefig('/Users/jonas/Dropbox/Research/ibm/bds/calc/qcorrp015.eps',
                     format='eps', dpi=100)
     plt.show()
+
+
+def bds_circuit(theta,alpha):
+    ket0 = st.cb(2,0); ket1 = st.cb(2,1)
+    proj0 = mf.proj(2,ket0); proj1 = mf.proj(2,ket1)
+    psi = ket0
+    for j in range(1,4):
+        psi = np.kron(psi,ket0)
+    gate = np.kron(gates.O2(theta/2),gates.O2(alpha/2))
+    gate = np.kron(np.kron(gate,gates.id(2)),gates.id(2))
+    psi = np.dot(gate,psi)
+    cn = gates.cnot(4,0,2)
+    psi = np.dot(cn,psi)
+    cn = gates.cnot(4,1,3)
+    psi = np.dot(cn,psi)
+    gate = np.kron(gates.id(8),gates.hadamard())
+    psi = np.dot(gate,psi)
+    cn = gates.cnot(4,3,2)
+    psi = np.dot(cn,psi)
+    return psi
+    
+
+def dbs_circuit_test():
+	ns = 10**3
+	cxx = np.zeros(ns)
+	cyy = np.zeros(ns)
+	czz = np.zeros(ns)
+	for j in range(0,ns):
+		rpv = rpvg.rpv_zhsl(4)
+		theta = 2.0*math.acos(math.sqrt(rpv[0]+rpv[1]))
+		alpha = 2.0*math.acos(math.sqrt(rpv[0]+rpv[2]))
+		psi = bds_circuit(theta,alpha)
+		rhor = ptr.pTraceL(4,4,mf.proj(16,psi))
+		cm = gm.corr_mat(2,2,rhor)
+		cxx[j] = cm[0][0]
+		cyy[j] = cm[1][1]
+		czz[j] = cm[2][2]
+	fig = plt.figure()
+	ax = fig.add_subplot(111, projection='3d')
+	ax.scatter(cxx, cyy, czz, c = 'b', marker='o', s=1)
+	ax.set_xlabel('c_xx')
+	ax.set_ylabel('c_yy')
+	ax.set_zlabel('c_zz')
+	plt.show()
+    
+	    
+dbs_circuit_test()	    
