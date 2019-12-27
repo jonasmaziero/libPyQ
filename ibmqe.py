@@ -152,7 +152,7 @@ def bds_circuit(theta,alpha):
     for j in range(1,4):
         psi = np.kron(psi,ket0)
     gate = np.kron(gates.O2(theta/2),gates.O2(alpha/2))
-    gate = np.kron(np.kron(gate,gates.id(2)),gates.id(2))
+    gate = np.kron(gate,gates.id(4))
     psi = np.dot(gate,psi)
     cn = gates.cnot(4,0,2)
     psi = np.dot(cn,psi)
@@ -163,30 +163,194 @@ def bds_circuit(theta,alpha):
     cn = gates.cnot(4,3,2)
     psi = np.dot(cn,psi)
     return psi
-    
+
 
 def dbs_circuit_test():
-	ns = 10**3
-	cxx = np.zeros(ns)
-	cyy = np.zeros(ns)
-	czz = np.zeros(ns)
-	for j in range(0,ns):
-		rpv = rpvg.rpv_zhsl(4)
-		theta = 2.0*math.acos(math.sqrt(rpv[0]+rpv[1]))
-		alpha = 2.0*math.acos(math.sqrt(rpv[0]+rpv[2]))
-		psi = bds_circuit(theta,alpha)
-		rhor = ptr.pTraceL(4,4,mf.proj(16,psi))
-		cm = gm.corr_mat(2,2,rhor)
-		cxx[j] = cm[0][0]
-		cyy[j] = cm[1][1]
-		czz[j] = cm[2][2]
-	fig = plt.figure()
-	ax = fig.add_subplot(111, projection='3d')
-	ax.scatter(cxx, cyy, czz, c = 'b', marker='o', s=1)
-	ax.set_xlabel('c_xx')
-	ax.set_ylabel('c_yy')
-	ax.set_zlabel('c_zz')
-	plt.show()
-    
-	    
-dbs_circuit_test()	    
+    ns = 5*10**3
+    cxx = np.zeros(ns)
+    cyy = np.zeros(ns)
+    czz = np.zeros(ns)
+    for j in range(0,ns):
+        rpv = rpvg.rpv_zhsl(4)
+        theta = 2.0*math.acos(math.sqrt(rpv[0]+rpv[1]))
+        alpha = 2.0*math.acos(math.sqrt(rpv[0]+rpv[2]))
+        psi = bds_circuit(theta,alpha)
+        rhor = ptr.pTraceL(4,4,mf.proj(16,psi))
+        cm = gm.corr_mat(2,2,rhor)
+        cxx[j] = cm[0][0]
+        cyy[j] = cm[1][1]
+        czz[j] = cm[2][2]
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(cxx, cyy, czz, c = 'b', marker='o', s=1)
+    ax.set_xlabel('c_xx')
+    ax.set_ylabel('c_yy')
+    ax.set_zlabel('c_zz')
+    ax.set_xlim(-1,1)
+    ax.set_ylim(-1,1)
+    ax.set_zlim(-1,1)
+    ax.plot([-1,1],[-1,1],[-1,-1], color='b')
+    ax.plot([-1,1],[1,-1],[1,1], color='b')
+    ax.plot([-1,1],[-1,-1],[-1,1], color='b')
+    ax.plot([-1,-1],[-1,1],[-1,1], color='b')
+    ax.plot([1,-1],[1,1],[-1,1], color='b')
+    ax.plot([1,1],[1,-1],[-1,1], color='b')
+    plt.show()
+
+
+def bds_circuit_(alpha,beta,gamma):
+    ket0 = st.cb(2,0); ket1 = st.cb(2,1)
+    proj0 = mf.proj(2,ket0); proj1 = mf.proj(2,ket1)
+    psi = ket0
+    for j in range(1,4):
+        psi = np.kron(psi,ket0)
+    gate = np.kron(gates.O2(alpha/2),gates.id(8))
+    psi = np.dot(gate,psi)
+    cn = gates.cnot(4,0,1)
+    psi = np.dot(cn,psi)
+    gate = np.kron(gates.O2(beta/2),gates.O2(gamma/2))
+    gate = np.kron(gate,gates.id(4))
+    psi = np.dot(gate,psi)
+    cn = gates.cnot(4,0,2)
+    psi = np.dot(cn,psi)
+    cn = gates.cnot(4,1,3)
+    psi = np.dot(cn,psi)
+    gate = np.kron(gates.id(8),gates.hadamard())
+    psi = np.dot(gate,psi)
+    cn = gates.cnot(4,3,2)
+    psi = np.dot(cn,psi)
+    return psi
+
+
+def dbs_circuit_test_():
+    ns = 5*10**3
+    cxx = np.zeros(ns)
+    cyy = np.zeros(ns)
+    czz = np.zeros(ns)
+    a = np.zeros(4)
+    A = np.zeros((2,2))
+    x = np.zeros(2)
+    b = np.zeros(2)
+    c = np.zeros(2)
+    for j in range(0,ns):
+        rpv = rpvg.rpv_zhsl(4)
+        a = np.sqrt(rpv)
+        alpha = math.asin(2*(a[0]*a[3]-a[1]*a[2]))
+        if math.cos(alpha) == 0:
+            gamma = 0
+            beta = 2*math.acos(math.sqrt(2)*a[0])
+        else:
+            A[0][0] = (math.cos(alpha/2)*a[0]-math.sin(alpha/2)*a[3])/math.cos(alpha)
+            A[0][1] = (math.cos(alpha/2)*a[1]+math.sin(alpha/2)*a[2])/math.cos(alpha)
+            A[1][0] = (math.sin(alpha/2)*a[1]+math.cos(alpha/2)*a[2])/math.cos(alpha)
+            A[1][1] = (-math.sin(alpha/2)*a[0]+math.cos(alpha/2)*a[3])/math.cos(alpha)
+            x = np.random.rand(2)
+            b = np.dot(np.dot(A,A.T),x); b /= np.linalg.norm(b)
+            if b[0] > 0:
+                beta = 2*math.acos(b[0])
+            elif b[0] < 0:
+                b = -b
+                beta = 2*math.acos(b[0])
+            elif b[0] == 0:
+                if b[1] < 0:
+                    b = -b
+                beta = 2*math.asin(b[1])
+            c = np.dot(np.dot(A.T,A),x); c /= np.linalg.norm(c)
+            if np.linalg.norm(np.dot(b,c.T)-A) > 1.e-6:
+                c = -c
+            gamma = 2*math.acos(c[0])
+        psi = bds_circuit_(alpha,beta,gamma)
+        rhor = ptr.pTraceL(4,4,mf.proj(16,psi))
+        cm = gm.corr_mat(2,2,rhor)
+        cxx[j] = cm[0][0]
+        cyy[j] = cm[1][1]
+        czz[j] = cm[2][2]
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(cxx, cyy, czz, c = 'b', marker='o', s=0.75)
+    ax.set_xlabel('c_xx')
+    ax.set_ylabel('c_yy')
+    ax.set_zlabel('c_zz')
+    ax.set_xlim(-1,1)
+    ax.set_ylim(-1,1)
+    ax.set_zlim(-1,1)
+    ax.plot([-1,1],[-1,1],[-1,-1], color='b')
+    ax.plot([-1,1],[1,-1],[1,1], color='b')
+    ax.plot([-1,1],[-1,-1],[-1,1], color='b')
+    ax.plot([-1,-1],[-1,1],[-1,1], color='b')
+    ax.plot([1,-1],[1,1],[-1,1], color='b')
+    ax.plot([1,1],[1,-1],[-1,1], color='b')
+    plt.show()
+
+def dbs_circuit_test_angles():
+    ns = 20**3
+    cxx = np.zeros(ns)
+    cyy = np.zeros(ns)
+    czz = np.zeros(ns)
+    da = math.pi/20
+    alpha = -math.pi/2 - da
+    for j in range(0,20):
+        alpha += da
+        beta = -da
+        for k in range(0,20):
+            beta += da
+            for l in range(0,20):
+                gamma += da
+                psi = bds_circuit_(alpha,beta,gamma)
+                rhor = ptr.pTraceL(4,4,mf.proj(16,psi))
+                cm = gm.corr_mat(2,2,rhor)
+                cxx[j] = cm[0][0]
+                cyy[j] = cm[1][1]
+                czz[j] = cm[2][2]
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(cxx, cyy, czz, c = 'b', marker='o', s=0.75)
+    ax.set_xlabel('c_xx')
+    ax.set_ylabel('c_yy')
+    ax.set_zlabel('c_zz')
+    ax.set_xlim(-1,1)
+    ax.set_ylim(-1,1)
+    ax.set_zlim(-1,1)
+    ax.plot([-1,1],[-1,1],[-1,-1], color='b')
+    ax.plot([-1,1],[1,-1],[1,1], color='b')
+    ax.plot([-1,1],[-1,-1],[-1,1], color='b')
+    ax.plot([-1,-1],[-1,1],[-1,1], color='b')
+    ax.plot([1,-1],[1,1],[-1,1], color='b')
+    ax.plot([1,1],[1,-1],[-1,1], color='b')
+    plt.show()
+
+def dbs_rpv_test():
+    from states import bell
+    ns = 5*10**3
+    cxx = np.zeros(ns)
+    cyy = np.zeros(ns)
+    czz = np.zeros(ns)
+    for j in range(0,ns):
+        rpv = rpvg.rpv_zhsl(4)
+        rhor = rpv[0]*mf.proj(4,bell(0,0)) + rpv[1]*mf.proj(4,bell(0,1))
+        rhor += (rpv[2]*mf.proj(4,bell(1,0)) + rpv[3]*mf.proj(4,bell(1,1)))
+        cm = gm.corr_mat(2,2,rhor)
+        cxx[j] = cm[0][0]
+        cyy[j] = cm[1][1]
+        czz[j] = cm[2][2]
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(cxx, cyy, czz, c = 'b', marker='o', s=0.5)
+    ax.set_xlabel('c_xx')
+    ax.set_ylabel('c_yy')
+    ax.set_zlabel('c_zz')
+    ax.set_xlim(-1,1)
+    ax.set_ylim(-1,1)
+    ax.set_zlim(-1,1)
+    ax.plot([-1,1],[-1,1],[-1,-1], color='b')
+    ax.plot([-1,1],[1,-1],[1,1], color='b')
+    ax.plot([-1,1],[-1,-1],[-1,1], color='b')
+    ax.plot([-1,-1],[-1,1],[-1,1], color='b')
+    ax.plot([1,-1],[1,1],[-1,1], color='b')
+    ax.plot([1,1],[1,-1],[-1,1], color='b')
+    plt.show()
+
+
+#dbs_circuit_test()
+#dbs_circuit_test_()
+dbs_rpv_test()

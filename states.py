@@ -4,7 +4,7 @@ from su import Pauli
 from mat_func import proj
 
 
-def Bell(j, k):
+def bell(j, k):
     if j == 0 and k == 0:
         return np.array([[1/sqrt(2)], [0], [0], [1/sqrt(2)]])  # phi+
     elif j == 0 and k == 1:
