@@ -7,32 +7,6 @@ from rpvg import rpv_zhsl
 from rug import ru_gram_schmidt
 from distances import normHS
 
-def test():
-    np.random.seed()
-    ns = 10**3  # number of samples for the average
-    nqb = 5  # maximum number of qubits regarded
-    Cavg1 = np.zeros(nqb)
-    Cavg2 = np.zeros(nqb)
-    d = np.zeros(nqb, dtype=int)
-    for j in range(0, nqb):
-        d[j] = 2**(j+1)
-        rs1 = np.zeros((d[j], d[j]), dtype=complex)
-        rs2 = np.zeros((d[j], d[j]), dtype=complex)
-        Cavg1[j] = 0.0; Cavg2[j] = 0.0
-        for k in range(0, ns):
-            rs1 = rdm(d[j],'gin')
-            rs2 = rdm(d[j],'pos_')
-            Cavg1[j] += coherence.coh(rs1,'l1')
-            Cavg2[j] += coherence.coh(rs2,'l1')
-        Cavg1[j] /= ns;  Cavg2[j] /= ns
-        print(Cavg1[j], Cavg2[j])
-    plt.plot(d, Cavg1, label='gin')
-    plt.plot(d, Cavg2, label='pos_')
-    plt.xlabel('d')
-    plt.ylabel('C')
-    plt.legend()
-    plt.show()
-
 def rdm(d,method):
     if method == 'std':
         return rdm_std(d)
@@ -40,10 +14,10 @@ def rdm(d,method):
         return rdm_ginibre(d)
     elif method == 'pos':
         return rdm_pos(d)
-    elif method == 'pos_':
-        return rdm_pos_(d)
+    elif method == 'pos_sub':
+        return rdm_pos_sub(d)
 
-def rdm_pos_(d):
+def rdm_pos_sub(d):
     rpv = np.zeros(d)
     rpv = rpvg.rpv_zhsl(d)
     rrho = np.zeros((d,d), dtype = complex)
@@ -142,3 +116,40 @@ def ginibre(d):
         for k in range(0, d):
             G[j][k] = grn[k] + (1j)*grn[k+d]
     return G
+
+
+def test():
+    np.random.seed()
+    ns = 10**3  # number of samples for the average
+    nqb = 5  # maximum number of qubits regarded
+    Cavg1 = np.zeros(nqb)
+    Cavg2 = np.zeros(nqb)
+    Cavg3 = np.zeros(nqb)
+    d = np.zeros(nqb, dtype=int)
+    for j in range(0, nqb):
+        d[j] = 2**(j+1)
+        rs1 = np.zeros((d[j], d[j]), dtype=complex)
+        rs2 = np.zeros((d[j], d[j]), dtype=complex)
+        rs3 = np.zeros((d[j], d[j]), dtype=complex)
+        Cavg1[j] = 0.0; Cavg2[j] = 0.0; Cavg3[j] = 0.0
+        for k in range(0, ns):
+            rs1 = rdm(d[j],'gin')
+            rs2 = rdm(d[j],'pos')
+            rs3 = rdm(d[j],'pos_sub')
+            Cavg1[j] += coherence.coh(rs1,'l1')
+            Cavg2[j] += coherence.coh(rs2,'l1')
+            Cavg3[j] += coherence.coh(rs3,'l1')
+        Cavg1[j] /= ns;  Cavg2[j] /= ns;  Cavg3[j] /= ns
+        print(d[j], Cavg1[j], Cavg2[j], Cavg3[j])
+    plt.plot(d, Cavg1, label='gin')
+    plt.plot(d, Cavg2, label='pos')
+    plt.plot(d, Cavg3, label='pos_sub')
+    plt.xlabel('d')
+    plt.ylabel('C')
+    #plt.xlim(-0.01,1.02)
+    plt.ylim(0,1)
+    plt.legend()
+    plt.show()
+
+
+test()

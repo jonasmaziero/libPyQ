@@ -24,7 +24,7 @@ def coh_l1(rho):  # normalized to [0,1]
     for j in range(0, d-1):
         for k in range(j+1, d):
             coh += math.sqrt((rho[j][k].real)**2.0 + (rho[j][k].imag)**2.0)
-    return 2.0*coh/(d*(d-1))
+    return 2.0*coh/(d-1)
 
 def coh_re(rho):
     d = rho.shape[0]
