@@ -56,6 +56,17 @@ def sandwich(d, phi, A, psi):
             sd += np.conj(phi[j])*A[j, k]*psi[k]
     return sd
 
+def ip_c(d,v,w):
+    ip = 0.0 + (1j)*0.0
+    for j in range(0,d):
+        ip = ip + np.conj(v[j])*w[j]
+    return ip
+
+def vnorm2(d, v):
+    vn = 0.0
+    for j in range(0,d):
+        vn = vn + (v[j].real)**2 + (v[j].imag)**2
+    return vn
 
 '''
 import su

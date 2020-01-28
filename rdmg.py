@@ -6,17 +6,10 @@ import rpvg
 from rpvg import rpv_zhsl
 from rug import ru_gram_schmidt
 from distances import normHS
+import mat_func as mf
 
-def rdm(d,method):
-    if method == 'std':
-        return rdm_std(d)
-    elif method == 'gin':
-        return rdm_ginibre(d)
-    elif method == 'pos':
-        return rdm_pos(d)
-    elif method == 'pos_sub':
-        return rdm_pos_sub(d)
 
+'''
 def rdm_pos_sub(d):
     rpv = np.zeros(d)
     rpv = rpvg.rpv_zhsl(d)
@@ -49,7 +42,6 @@ def rdm_pos(d):
             r -= (math.pow(x,2)+math.pow(y,2))
     return rrho
 
-'''
 def test_rcircle():
     n = 10000
     r = 1
@@ -69,7 +61,6 @@ def test_rcircle():
     plt.legend()
     plt.show()
     return
-'''
 
 def rand_circle(r):
     th = 2*math.pi*np.random.random()
@@ -91,6 +82,7 @@ def rdm_std(d):
                 if j != k:
                     rdm[k][j] = rdm[j][k].real - (1j)*rdm[j][k].imag
     return rdm
+'''
 
 def rdm_ginibre(d):
     rdm = np.zeros((d, d), dtype=complex)
@@ -108,6 +100,36 @@ def rdm_ginibre(d):
                 rdm[k][j] = rdm[j][k].real - (1j)*rdm[j][k].imag
     return rdm
 
+
+def rdm_ginibre_classes(d,nulle):
+    rdm = np.zeros((d, d), dtype=complex)
+    v = np.zeros(d, dtype=complex)
+    w = np.zeros(d, dtype=complex)
+    G = ginibre(d)
+    for j in range(0,d-1):
+        for k in range(j+1,d): 
+            if nulle[j][k] == 0:
+                for l in range (0,d):
+                    v[l] = G[l][j] #|C_j(G)>
+                    w[l] = G[l][k] #|C_k(G)>
+                ipc = mf.ip_c(d, v, w)
+                vnorm2 = mf.vnorm2_c(d, v)
+                for l in range(0,d):
+                    G[l][k] = G[l][k] - (ipc*G[l][j])/vnorm2
+    N2 = (normHS(d, G))**2
+    for j in range(0, d):
+        for k in range(j, d):
+            for l in range(0, d):
+                rdm[j][k] = rdm[j][k] + (G[j][l].real)*(G[k][l].real) \
+                    + (G[j][l].imag)*(G[k][l].imag) \
+                    - (1j)*((G[j][l].real)*(G[k][l].imag) \
+                    - (G[j][l].imag)*(G[k][l].real))
+            rdm[j][k] = rdm[j][k]/N2
+            if j != k:
+                rdm[k][j] = rdm[j][k].real - (1j)*rdm[j][k].imag
+    return rdm
+
+
 def ginibre(d):
     G = np.zeros((d, d), dtype=complex)
     mu, sigma = 0.0, 1.0
@@ -124,26 +146,24 @@ def test():
     nqb = 5  # maximum number of qubits regarded
     Cavg1 = np.zeros(nqb)
     Cavg2 = np.zeros(nqb)
-    Cavg3 = np.zeros(nqb)
     d = np.zeros(nqb, dtype=int)
     for j in range(0, nqb):
         d[j] = 2**(j+1)
         rs1 = np.zeros((d[j], d[j]), dtype=complex)
         rs2 = np.zeros((d[j], d[j]), dtype=complex)
-        rs3 = np.zeros((d[j], d[j]), dtype=complex)
-        Cavg1[j] = 0.0; Cavg2[j] = 0.0; Cavg3[j] = 0.0
-        for k in range(0, ns):
-            rs1 = rdm(d[j],'gin')
-            rs2 = rdm(d[j],'pos')
-            rs3 = rdm(d[j],'pos_sub')
+        nulle = np.ones((d[j],d[j]), dtype = int)
+        Cavg1[j] = 0.0; Cavg2[j] = 0.0
+        k = 0
+        while k < ns:
+            k += 1
+            rs1 = rdm_ginibre(d[j])
+            rs2 = rdm_ginibre_classes(d[j],nulle)
             Cavg1[j] += coherence.coh(rs1,'l1')
             Cavg2[j] += coherence.coh(rs2,'l1')
-            Cavg3[j] += coherence.coh(rs3,'l1')
-        Cavg1[j] /= ns;  Cavg2[j] /= ns;  Cavg3[j] /= ns
-        print(d[j], Cavg1[j], Cavg2[j], Cavg3[j])
+        Cavg1[j] /= ns;  Cavg2[j] /= ns
+        print(d[j], Cavg1[j], Cavg2[j])
     plt.plot(d, Cavg1, label='gin')
-    plt.plot(d, Cavg2, label='pos')
-    plt.plot(d, Cavg3, label='pos_sub')
+    plt.plot(d, Cavg2, label='cla')
     plt.xlabel('d')
     plt.ylabel('C')
     #plt.xlim(-0.01,1.02)
