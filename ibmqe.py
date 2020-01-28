@@ -292,20 +292,21 @@ def bds_circuit_(alpha,beta,gamma):
     psi = np.dot(cn,psi)
     return psi
 
-def bds_circuit_angles(a):
+def bds_circuit_angles(p):
+    a = np.sqrt(p)
     A = np.zeros((2,2))
     x = np.zeros((2,1))
     b = np.zeros((2,1))
     c = np.zeros((2,1))
-    alpha = math.asin(2*(a[0]*a[3]-a[1]*a[2]))
+    alpha = math.asin(2*(a[0][0]*a[1][1]-a[0][1]*a[1][0]))
     if math.cos(alpha) == 0:
         gamma = 0
         beta = 0
     else:
-        A[0][0] = (math.cos(alpha/2)*a[0] - math.sin(alpha/2)*a[3])/math.cos(alpha)
-        A[0][1] = (math.cos(alpha/2)*a[1] + math.sin(alpha/2)*a[2])/math.cos(alpha)
-        A[1][0] = (math.sin(alpha/2)*a[1] + math.cos(alpha/2)*a[2])/math.cos(alpha)
-        A[1][1] = (-math.sin(alpha/2)*a[0] + math.cos(alpha/2)*a[3])/math.cos(alpha)
+        A[0][0] = (math.cos(alpha/2)*a[0][0] - math.sin(alpha/2)*a[1][1])/math.cos(alpha)
+        A[0][1] = (math.cos(alpha/2)*a[0][1] + math.sin(alpha/2)*a[1][0])/math.cos(alpha)
+        A[1][0] = (math.sin(alpha/2)*a[0][1] + math.cos(alpha/2)*a[1][0])/math.cos(alpha)
+        A[1][1] = (-math.sin(alpha/2)*a[0][0] + math.cos(alpha/2)*a[1][1])/math.cos(alpha)
         x = np.random.rand(2,1)
         b = np.matmul(np.matmul(A,A.T),x); 
         b /= np.linalg.norm(b,keepdims=True)
@@ -334,10 +335,11 @@ def dbs_circuit_test_():
     cxx = np.zeros(ns)
     cyy = np.zeros(ns)
     czz = np.zeros(ns)
+    p = np.zeros((2,2))
     a = np.zeros(4)
     for j in range(0,ns):
         rpv = rpvg.rpv_zhsl(4)
-        a = np.sqrt(rpv)
+        a = np.reshape(rpv,(2,2))
         alpha,beta,gamma = bds_circuit_angles(a)
         psi = bds_circuit_(alpha,beta,gamma)
         rhor = ptr.pTraceL(4,4,mf.proj(16,psi))
