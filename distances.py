@@ -61,6 +61,13 @@ def normHS(d, A):
             N += (A[j][k].real)**2.0 + (A[j][k].imag)**2.0
     return np.sqrt(N)
 
+def normHS2(d,A):
+    N2 = 0
+    for j in range(0, d):
+        for k in range(0, d):
+            N2 += (A[j][k].real)**2 + (A[j][k].imag)**2
+    return N2
+
 
 '''
 def test_distances():
