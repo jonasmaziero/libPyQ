@@ -14,6 +14,9 @@ def purity(rho):
             purity += (rho[j][k].real)**2 + (rho[j][k].imag)**2
     return purity
 
+def linear_entropy(rho):
+    return 1-purity(rho)
+
 def shannon(pv):
     d = pv.shape[0]
     SE = 0.0
